@@ -45,8 +45,10 @@ class Evolver
             std::uniform_real_distribution  random;
 
             auto    parent      = begin;
+            auto    loop        = begin;
+            ++loop;
 
-            for (auto loop = begin; loop != end; ++loop)
+            for (; loop != end; ++loop)
             {
                 if (random(generator) < (std::distance(begin, loop) / 75.0))
                 {
@@ -57,6 +59,10 @@ class Evolver
                     //std::cout << "Evolve: " << killIndex << "(" << robots[killIndex]->score() << ") Replaced with: " << killCount % killIndex << " (" << robots[killCount % killIndex]->score() << ")\n";
                     (*loop)->mutate(**parent);
                     ++parent;
+                    if (parent == end)
+                    {
+                        parent = begin;
+                    }
                 }
                 else
                 {
