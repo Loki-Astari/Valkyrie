@@ -11,7 +11,7 @@ AC_CONFIG_AUX_DIR([build/autotools/build])
 AX_THOR_FUNC_BUILD
 
 
-AC_CONFIG_SRCDIR([src/Valkyrie/Valkyrie.cpp])
+AC_CONFIG_SRCDIR([src/Valkyrie/Runner.cpp])
 
 # Find the C++ Copiler
 # The minimumm requirements.
@@ -31,6 +31,30 @@ LT_INIT
 #
 # Add your defintions in here.
 # Note there are some predefined macros in build/autotools/m4/
+AC_CHECK_LIB([ThorsUI17], [_ZTIN10ThorsAnvil7ThorsUI11AnimateableE], [], AC_MSG_ERROR([
+
+    This library depends on the ThorsUI
+    It can be found here: https://github.com/Loki-Astari/ThorsUI
+    Install with:
+        > git clone git@github.com:Loki-Astari/ThorsUI.git
+        > cd ThorsUI
+        > ./configure
+        > make
+        > sudo make install
+
+]))
+AC_CHECK_LIB([ThorsUtil17], [_ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv], [], AC_MSG_ERROR([
+
+    This library depends on the ThorsUtil
+    It can be found here: https://github.com/Loki-Astari/ThorsUtil
+    Install with:
+        > git clone git@github.com:Loki-Astari/ThorsUtil.git
+        > cd ThorsUtil
+        > ./configure
+        > make
+        > sudo make install
+
+]))
 
 
 

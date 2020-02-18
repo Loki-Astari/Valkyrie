@@ -595,7 +595,7 @@ PACKAGE_STRING='Valkyrie 0.1'
 PACKAGE_BUGREPORT='YourName@Email.com'
 PACKAGE_URL=''
 
-ac_unique_file="src/Valkyrie/Valkyrie.cpp"
+ac_unique_file="src/Valkyrie/Runner.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -16981,6 +16981,122 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 #
 # Add your defintions in here.
 # Note there are some predefined macros in build/autotools/m4/
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for _ZTIN10ThorsAnvil7ThorsUI11AnimateableE in -lThorsUI17" >&5
+$as_echo_n "checking for _ZTIN10ThorsAnvil7ThorsUI11AnimateableE in -lThorsUI17... " >&6; }
+if ${ac_cv_lib_ThorsUI17__ZTIN10ThorsAnvil7ThorsUI11AnimateableE+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lThorsUI17  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char _ZTIN10ThorsAnvil7ThorsUI11AnimateableE ();
+int
+main ()
+{
+return _ZTIN10ThorsAnvil7ThorsUI11AnimateableE ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_ThorsUI17__ZTIN10ThorsAnvil7ThorsUI11AnimateableE=yes
+else
+  ac_cv_lib_ThorsUI17__ZTIN10ThorsAnvil7ThorsUI11AnimateableE=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ThorsUI17__ZTIN10ThorsAnvil7ThorsUI11AnimateableE" >&5
+$as_echo "$ac_cv_lib_ThorsUI17__ZTIN10ThorsAnvil7ThorsUI11AnimateableE" >&6; }
+if test "x$ac_cv_lib_ThorsUI17__ZTIN10ThorsAnvil7ThorsUI11AnimateableE" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBTHORSUI17 1
+_ACEOF
+
+  LIBS="-lThorsUI17 $LIBS"
+
+else
+  as_fn_error $? "
+
+    This library depends on the ThorsUI
+    It can be found here: https://github.com/Loki-Astari/ThorsUI
+    Install with:
+        > git clone git@github.com:Loki-Astari/ThorsUI.git
+        > cd ThorsUI
+        > ./configure
+        > make
+        > sudo make install
+
+" "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for _ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv in -lThorsUtil17" >&5
+$as_echo_n "checking for _ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv in -lThorsUtil17... " >&6; }
+if ${ac_cv_lib_ThorsUtil17__ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lThorsUtil17  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char _ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv ();
+int
+main ()
+{
+return _ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_ThorsUtil17__ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv=yes
+else
+  ac_cv_lib_ThorsUtil17__ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ThorsUtil17__ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv" >&5
+$as_echo "$ac_cv_lib_ThorsUtil17__ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv" >&6; }
+if test "x$ac_cv_lib_ThorsUtil17__ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBTHORSUTIL17 1
+_ACEOF
+
+  LIBS="-lThorsUtil17 $LIBS"
+
+else
+  as_fn_error $? "
+
+    This library depends on the ThorsUtil
+    It can be found here: https://github.com/Loki-Astari/ThorsUtil
+    Install with:
+        > git clone git@github.com:Loki-Astari/ThorsUtil.git
+        > cd ThorsUtil
+        > ./configure
+        > make
+        > sudo make install
+
+" "$LINENO" 5
+fi
+
 
 
 

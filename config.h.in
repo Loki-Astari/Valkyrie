@@ -15,6 +15,12 @@
 /* Define to 1 if you have the `tcl' library (-ltcl). */
 #undef HAVE_LIBTCL
 
+/* Define to 1 if you have the `ThorsUI17' library (-lThorsUI17). */
+#undef HAVE_LIBTHORSUI17
+
+/* Define to 1 if you have the `ThorsUtil17' library (-lThorsUtil17). */
+#undef HAVE_LIBTHORSUTIL17
+
 /* Define to 1 if you have the `tk' library (-ltk). */
 #undef HAVE_LIBTK
 
