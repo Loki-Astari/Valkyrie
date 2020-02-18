@@ -63,6 +63,6 @@ AC_CHECK_LIB([ThorsUtil17], [_ZN10ThorsAnvil9ThorsUtil6Random7getSeedEv], [], AC
 # Note: you can push the config file to sub directories in the AC_CONFIG_HEADERS macro (see example)
 # Note: Local Make variables should be placed in Makefile.config.in
 AM_INIT_AUTOMAKE([foreign])
-AC_CONFIG_HEADERS([ src/Valkyrie/ValkyrieConfig.h src/Maze/ValkyrieMazeConfig.h ])
+AC_CONFIG_HEADERS([ src/Valkyrie/ValkyrieConfig.h src/Maze/ValkyrieMazeConfig.h src/Walker/ValkyrieWalkerConfig.h ])
 AC_CONFIG_FILES([Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in])
 AC_OUTPUT

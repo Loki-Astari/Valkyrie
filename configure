@@ -17957,7 +17957,7 @@ END
   fi
 fi
 
-ac_config_headers="$ac_config_headers src/Valkyrie/ValkyrieConfig.h src/Maze/ValkyrieMazeConfig.h"
+ac_config_headers="$ac_config_headers src/Valkyrie/ValkyrieConfig.h src/Maze/ValkyrieMazeConfig.h src/Walker/ValkyrieWalkerConfig.h"
 
 ac_config_files="$ac_config_files Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in"
 
@@ -19075,6 +19075,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "src/Valkyrie/ValkyrieConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Valkyrie/ValkyrieConfig.h" ;;
     "src/Maze/ValkyrieMazeConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Maze/ValkyrieMazeConfig.h" ;;
+    "src/Walker/ValkyrieWalkerConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Walker/ValkyrieWalkerConfig.h" ;;
     "Makefile.extra") CONFIG_FILES="$CONFIG_FILES Makefile.extra" ;;
     "Makefile.config") CONFIG_FILES="$CONFIG_FILES Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in" ;;
 
