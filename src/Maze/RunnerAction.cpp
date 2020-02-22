@@ -11,7 +11,7 @@ RunnerAction::RunnerAction(Maze& maze, RunnerMaze& runner)
 
 void RunnerAction::draw(wxDC& dc) const
 {
-    runner.drawAnimation(dc);
+    runner.drawAnimation(dc, 0);
     maze.draw(dc);
 }
 
@@ -20,9 +20,9 @@ wxSize RunnerAction::getSize() const
     return maze.getSize();
 }
 
-void RunnerAction::drawAnimation(wxDC& dc) const
+void RunnerAction::drawAnimation(wxDC& dc, int step) const
 {
-    return runner.drawAnimation(dc);
+    return runner.drawAnimation(dc, step);
 }
 
 std::unique_ptr<wxDC> RunnerAction::animationDC()

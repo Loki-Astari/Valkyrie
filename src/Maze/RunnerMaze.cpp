@@ -127,7 +127,7 @@ wxSize RunnerMaze::getSize() const
     return wxSize(20, 20);
 }
 
-void RunnerMaze::drawAnimation(wxDC& dc) const
+void RunnerMaze::drawAnimation(wxDC& dc, int /*step*/) const
 {
     dc.DrawBitmap(bitmap, 0, 0);
 }

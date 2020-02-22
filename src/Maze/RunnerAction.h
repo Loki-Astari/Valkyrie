@@ -22,7 +22,7 @@ class RunnerAction: public ThorsUI::Animateable
         virtual wxSize  getSize()       const override;
 
         // Animateable
-        virtual void    drawAnimation(wxDC& dc) const           override;
+        virtual void    drawAnimation(wxDC& dc, int step) const override;
         virtual std::unique_ptr<wxDC>   animationDC()           override;
         virtual void    animateResetDo(wxDC& dc)                override;
         virtual void    animationStepDo(wxDC& dc, int step)     override;

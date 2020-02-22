@@ -113,7 +113,7 @@ void ValkyrieMazeInfo::saveState(int iterations, int iter, wxPanel* panel)
     for (auto const& robot: robots)
     {
         save << (*robot);
-        robot->animateOneLoop(dc);
+        robot->animateOneLoop(dc, false);
         tScore += (robot->score() / 100);
     }
     std::cout << "Saved: " << time(nullptr)
