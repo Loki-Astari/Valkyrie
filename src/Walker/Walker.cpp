@@ -38,6 +38,11 @@ void Node::updatePos(Force const& force)
     position.second += std::trunc(force.second);
 }
 
+void Node::setPos(Pos const& p)
+{
+    position = p;
+}
+
 Muscle::Muscle()
     : currentTick(0)
 {
@@ -207,6 +212,154 @@ void Walker::normalize(int maxRep)
 
 void Walker::applyGravity()
 {
+    float   centerGravity;
+    do
+    {
+        // Find lowest point and center of gravity.
+        auto    lowestNode = findLowestNode();
+        translateNodes({0, -lowestNode.getPos().second});
+
+        auto    base                = getBaseOfObject(lowestNode);
+        int     minXPointOnGround   = std::get<0>(base).getPos().first;
+        int     maxXPointOnGround   = std::get<1>(base).getPos().first;
+
+        centerGravity   = calculateCenterOfGravity();
+
+        if (centerGravity < minXPointOnGround)
+        {
+            float alpha = findSmallestAngleFrom([](int pos, int point){return pos < point;}, minXPointOnGround);
+            rotateNodesAround(std::get<0>(base), alpha);
+
+            // The center of mass has shifted after rotation.
+            // We need to restart the loop and try again to make sure we are stable.
+            continue;
+        }
+        if (centerGravity > maxXPointOnGround)
+        {
+            float alpha = findSmallestAngleFrom([](int pos, int point){return pos > point;}, maxXPointOnGround);
+            rotateNodesAround(std::get<1>(base), alpha);
+
+            // The center of mass has shifted after rotation.
+            // We need to restart the loop and try again to make sure we are stable.
+            continue;
+        }
+
+        // No Rotation required.
+        // We can break out of the loop.
+        break;
+    }
+    while (true);
+    translateNodes({-centerGravity, 0});
+}
+
+Node const& Walker::findLowestNode() const
+{
+    int     lowestNode      = 0;
+    int     minHeight       = nodes[lowestNode].getPos().second;
+    for (std::size_t loop = 1; loop < nodes.size(); ++loop)
+    {
+        if (minHeight > nodes[loop].getPos().second)
+        {
+            minHeight = nodes[loop].getPos().second;
+            lowestNode = loop;
+        }
+    }
+    return nodes[lowestNode];
+}
+
+float Walker::calculateCenterOfGravity() const
+{
+    int     totalMass       = 0;
+    int     turningMomentum = 0;
+    for (std::size_t loop = 0; loop < nodes.size(); ++loop)
+    {
+        int currentMass = nodes[loop].getMass();
+        totalMass       += currentMass;
+        turningMomentum += nodes[loop].getPos().first * currentMass;
+    }
+    float   centerGravity   = 1.0 * turningMomentum / totalMass;
+
+    return centerGravity;
+}
+
+void Walker::rotateNodesAround(Node const& cent, float alpha)
+{
+    auto centerOfRotation = cent.getPos();
+
+    for (auto& node: nodes)
+    {
+        auto pos = node.getPos();
+        pos.first  -= centerOfRotation.first;
+        pos.second -= centerOfRotation.second;
+
+        float s = sin(alpha);
+        float c = cos(alpha);
+
+        float xNew = (pos.first * c - pos.second * s) + centerOfRotation.first;
+        float yNew = (pos.first * s + pos.second * c) + centerOfRotation.second;
+
+        node.setPos({xNew, yNew});
+    }
+}
+
+void Walker::translateNodes(Pos const& relative)
+{
+    for (std::size_t loop = 0; loop < nodes.size(); ++loop)
+    {
+        nodes[loop].updatePos(relative);
+    }
+}
+
+Walker::Bound Walker::getBaseOfObject(Node& lowestNode) const
+{
+    int minXNodeOnGround;
+    int maxXNodeOnGround;
+    int minXPointOnGround   = lowestNode.getPos().first;
+    int maxXPointOnGround   = lowestNode.getPos().first;
+
+    for (std::size_t loop = 0; loop < nodes.size(); ++loop)
+    {
+        auto const& pos = nodes[loop].getPos();
+
+        // Check to see if there are other points on the ground.
+        // Keep note of the left and right-most points.
+        if (pos.second == 0)
+        {
+            if (pos.first <= minXPointOnGround)
+            {
+                minXPointOnGround   = pos.first;
+                minXNodeOnGround    = loop;
+            }
+            if (maxXPointOnGround <= pos.first)
+            {
+                maxXPointOnGround   = pos.first;
+                maxXNodeOnGround    = loop;
+            }
+        }
+    }
+
+    return std::tie(nodes[minXNodeOnGround], nodes[maxXNodeOnGround]);
+}
+
+template<typename F>
+float Walker::findSmallestAngleFrom(F const& test, int point) const
+{
+    int     lowestNodeLeftOfTurningPoint    = -1;
+    float   lowestAngleLeftOfTurningPoint;
+    for (std::size_t loop = 0; loop < nodes.size(); ++loop)
+    {
+        auto const& pos = nodes[loop].getPos();
+        float thisAngle = 1.0 * pos.second / (point - pos.first);
+        if (test(pos.first, point) && (lowestNodeLeftOfTurningPoint == -1 || lowestAngleLeftOfTurningPoint > thisAngle))
+        {
+            lowestNodeLeftOfTurningPoint    = loop;
+            lowestAngleLeftOfTurningPoint   = thisAngle;
+        }
+    }
+    //auto const& pos = nodes[lowestNodeLeftOfTurningPoint].getPos();
+
+    float alpha = std::atan(lowestAngleLeftOfTurningPoint);
+    return alpha;
 }
 
 wxPoint toScreen(Pos const& p, int xOffset = 0, int yOffset = 0)

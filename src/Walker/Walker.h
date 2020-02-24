@@ -14,7 +14,8 @@ namespace ThorsAnvil
 
 // Position in MiliMeters
 using ThorsAnvil::ThorsUtil::Pos;
-using Force = std::pair<float, float>;
+using Force  = std::pair<float, float>;
+using Center = std::pair<float, float>;
 
 class Clock
 {
@@ -34,6 +35,7 @@ class Node
         Pos const&  getPos()    const;
         int         getMass()   const;
         void updatePos(Force const& f);
+        void setPos(Pos const& p);
 };
 
 class Muscle
@@ -75,6 +77,16 @@ class Walker: public ThorsUI::Animateable
     private:
         void normalize(int maxRep = 100);
         void applyGravity();
+        // Gravity Functions
+        using Bound = std::tuple<Node const&, Node const&>;
+
+        template<typename F>
+        float       findSmallestAngleFrom(F const& test, int point) const;
+        Node const& findLowestNode()                                const;
+        float       calculateCenterOfGravity()                      const;
+        Bound       getBaseOfObject(Node& lowestNode)               const;
+        void        rotateNodesAround(Node const& node, float alpha);
+        void        translateNodes(Pos const& relative);
 };
 
     }
