@@ -2,9 +2,9 @@
 #define THORSANVIL_VALKYRIE_WALKER_H
 
 #include "ValkyrieWalkerConfig.h"
+#include "Walker.h"
 
-#include <ThorsUtil/BackgroundWorker.h>
-#include <ThorsUI/Drawable.h>
+#include <ThorsUI/Animateable.h>
 #include <wx/wx.h>
 #include <wx/cmdline.h>
 #include <memory>
@@ -15,24 +15,12 @@ namespace ThorsAnvil
     namespace ValkyrieWalker
     {
 
-class ValkyrieWalkerInfo: public ThorsUI::Drawable
-{
-    public:
-        ValkyrieWalkerInfo();
-
-        virtual void        draw(wxDC& dc)  const;
-        virtual wxSize      getSize()       const;
-
-    private:
-};
-
 class ValkyrieWalkerFrame: public wxFrame
 {
-    ValkyrieWalkerInfo&                     valkyrieWalker;
-    ThorsUtil::BackgroundWorker             worker;
+    Walker&                       walker;
 
     public:
-        ValkyrieWalkerFrame(ValkyrieWalkerInfo& valkyrieWalker);
+        ValkyrieWalkerFrame(Walker& walker);
 
     private:
         void onQuit(wxCommandEvent& event);
@@ -43,12 +31,17 @@ class ValkyrieWalkerFrame: public wxFrame
 
 class ValkyrieWalkerApp: public wxApp
 {
-    static const wxCmdLineEntryDesc cmdLineDesc[];
-
-    std::unique_ptr<ValkyrieWalkerInfo>    valkyrieWalker;
+    struct SeedSetter
+    {
+        SeedSetter();
+    };
+    SeedSetter      setter;
+    Walker          walker;
 
     public:
+#pragma vera-pushoff
         virtual bool OnInit() override;
+#pragma vera-pop
 };
 
     }

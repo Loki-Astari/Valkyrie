@@ -1,5 +1,5 @@
 #include "ValkyrieWalker.h"
-#include <ThorsUI/UIPanelDrawable.h>
+#include <ThorsUI/UIPanelAnimateableSteper.h>
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
@@ -12,44 +12,19 @@ BEGIN_EVENT_TABLE(ValkyrieWalkerFrame, wxFrame)
     EVT_MENU(wxID_EXIT,         ValkyrieWalkerFrame::onQuit)
 END_EVENT_TABLE()
 
-const wxCmdLineEntryDesc ValkyrieWalkerApp::cmdLineDesc[] =
-{
-     { wxCMD_LINE_NONE, 0, 0, 0, wxCMD_LINE_VAL_NONE, 0 }
-};
-
-/************ Application ********************/
-
-ValkyrieWalkerInfo::ValkyrieWalkerInfo()
-{
-}
-
-void ValkyrieWalkerInfo::draw(wxDC& /*dc*/) const
-{
-}
-
-wxSize ValkyrieWalkerInfo::getSize() const
-{
-    return wxSize{0, 0};
-}
-
 /************ UI APP ********************/
+
+ValkyrieWalkerApp::SeedSetter::SeedSetter()
+{
+    ThorsAnvil::ThorsUtil::Random::defaltGeneratorSeedSet(1);
+}
 
 bool ValkyrieWalkerApp::OnInit()
 {
     std::cout.sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    wxCmdLineParser     commandLineParser(cmdLineDesc, argc, argv);
-
-    int res = commandLineParser.Parse(false);
-    if (res == -1 || res > 0 || commandLineParser.Found(wxT("h")))
-    {
-        commandLineParser.Usage();
-        return false;
-    }
-
-    valkyrieWalker.reset(new ValkyrieWalkerInfo());
-    ValkyrieWalkerFrame* frame = new ValkyrieWalkerFrame(*valkyrieWalker);
+    ValkyrieWalkerFrame* frame = new ValkyrieWalkerFrame(walker);
 
     frame->Show(true);
     return true;
@@ -57,14 +32,15 @@ bool ValkyrieWalkerApp::OnInit()
 
 /************ UI Frame ********************/
 
-ValkyrieWalkerFrame::ValkyrieWalkerFrame(ValkyrieWalkerInfo& valkyrieWalker)
+ValkyrieWalkerFrame::ValkyrieWalkerFrame(Walker& walk)
     : wxFrame(nullptr, wxID_ANY, wxT("Valkyrie"))
-    , valkyrieWalker(valkyrieWalker)
+    , walker(walk)
 {
     wxSizer* sizer      = new wxBoxSizer(wxVERTICAL);
 
-    wxPanel* mazePanel = new ThorsUI::PanelDrawable(this, valkyrieWalker);
-    sizer->Add(mazePanel, 1, 0, 10, nullptr);
+    wxPanel* walkerPanel = new ThorsUI::PanelAnimateableSteper(this, walker);
+
+    sizer->Add(walkerPanel, 1, 0, 10, nullptr);
 
     wxSizer* robotSizer = new wxGridSizer(10, 5, 5);
     sizer->Add(robotSizer, wxSizerFlags());
@@ -103,6 +79,5 @@ void ValkyrieWalkerFrame::onAbout(wxCommandEvent& /*event*/)
 
 void ValkyrieWalkerFrame::onQuit(wxCommandEvent& /*event*/)
 {
-    valkyrieWalker.getSize();
     Close();
 }
