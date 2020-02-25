@@ -146,11 +146,12 @@ Walker::Walker()
 void Walker::tick()
 {
     int nextTick = clock.tick();
-    for (auto m: muscles)
+    for (auto& m: muscles)
     {
         m.tick(nextTick);
     }
     normalize();
+    applyGravity();
 }
 
 void Walker::normalize(int maxRep)
