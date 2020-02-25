@@ -344,21 +344,23 @@ Walker::Bound Walker::getBaseOfObject(Node& lowestNode) const
 template<typename F>
 float Walker::findSmallestAngleFrom(F const& test, int point) const
 {
-    int     lowestNodeLeftOfTurningPoint    = -1;
-    float   lowestAngleLeftOfTurningPoint;
+    int     nodeWithSmallestAngle    = -1;
+    float   smallestAngle;
+    float   smallestAngleAbsolute;
     for (std::size_t loop = 0; loop < nodes.size(); ++loop)
     {
         auto const& pos = nodes[loop].getPos();
         float thisAngle = 1.0 * pos.second / (point - pos.first);
-        if (test(pos.first, point) && (lowestNodeLeftOfTurningPoint == -1 || lowestAngleLeftOfTurningPoint > thisAngle))
+        float thisAngleAbsolute = std::abs(thisAngle);
+        if (test(pos.first, point) && (nodeWithSmallestAngle == -1 || thisAngleAbsolute < smallestAngleAbsolute))
         {
-            lowestNodeLeftOfTurningPoint    = loop;
-            lowestAngleLeftOfTurningPoint   = thisAngle;
+            nodeWithSmallestAngle   = loop;
+            smallestAngle           = thisAngle;
+            smallestAngleAbsolute   = thisAngleAbsolute;
         }
     }
-    //auto const& pos = nodes[lowestNodeLeftOfTurningPoint].getPos();
 
-    float alpha = std::atan(lowestAngleLeftOfTurningPoint);
+    float alpha = std::atan(smallestAngle);
     return alpha;
 }
 
