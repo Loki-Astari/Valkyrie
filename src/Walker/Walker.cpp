@@ -62,11 +62,17 @@ Muscle::Muscle()
 void Muscle::tick(int tick)
 {
     currentTick = tick % (extendedTime + contractTime);
-
-    int     timeLeft = (currentTick < extendedTime) ? extendedTime - currentTick : contractLen - (currentTick - extendedTime);
-    float   distance = (contractLen - currentSize) / timeLeft;
-
-    currentSize += distance;
+    if (currentTick < extendedTime)
+    {
+        // Expand phase
+        currentSize = contractLen + (1.0 * currentTick / extendedTime * (extendedLen - contractLen));
+    }
+    else
+    {
+        // Contract phase
+        currentTick -= extendedTime;
+        currentSize = extendedLen - (1.0 * currentTick / contractTime * (extendedLen - contractLen));
+    }
 }
 
 float Muscle::getLen() const
@@ -367,7 +373,7 @@ wxPoint toScreen(Pos const& p, int xOffset = 0, int yOffset = 0)
 {
     // Y cordinate is from bottom up (Y 0 is 20 pixels off the bottom)
     // X cordinate 0 is the middle of the screen.
-    return wxPoint{750 + xOffset + p.first, 1000 - 20 - yOffset - p.second};
+    return wxPoint{500 + xOffset + (p.first / 2), 500 - 20 - yOffset - (p.second / 2)};
 }
 
 void Walker::drawAnimation(wxDC& dc, int /*step*/) const
@@ -396,5 +402,5 @@ int Walker::animationMaxStep() const
 
 wxSize Walker::getSize() const
 {
-    return {1500, 1000};
-}
+    return {1000, 500};
+
