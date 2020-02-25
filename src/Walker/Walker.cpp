@@ -135,12 +135,12 @@ Walker::Walker()
             continue;
         }
 
-        // Add a new muscle and normalize the distance between nodes.
         int musIndex = muscles.size();
         muscles.emplace_back();
         connections[musIndex] = bestCon;
-        //normalize();
     }
+    normalize();
+    dropAndFindRestingPoint();
 }
 
 void Walker::tick()
@@ -216,46 +216,64 @@ void Walker::normalize(int maxRep)
     }
 }
 
+void Walker::dropAndFindRestingPoint()
+{
+    Node const&    lowestNode          = dropToGround();
+
+    float   centerGravity       = rotateAroundLowestPoint(lowestNode, 2 * M_PI);
+    translateNodes({-centerGravity, 0});
+}
+
 void Walker::applyGravity()
 {
+    Node const&    lowestNode          = dropToGround();
+    rotateAroundLowestPoint(lowestNode, 2 * M_PI * 15 / 360);
+}
+
+Node const& Walker::dropToGround()
+{
+    Node const&    lowestNode = findLowestNode();
+    translateNodes({0, -lowestNode.getPos().second});
+
+    return lowestNode;
+}
+
+float Walker::rotateAroundLowestPoint(Node const& lowestNode, float maxTurn)
+{
+    auto    base                = getBaseOfObject(lowestNode);
+    int     minXPointOnGround   = std::get<0>(base).getPos().first;
+    int     maxXPointOnGround   = std::get<1>(base).getPos().first;
+
+
+    float   totalRotation = 0;
     float   centerGravity;
+    bool    rotation;
     do
     {
-        // Find lowest point and center of gravity.
-        auto    lowestNode = findLowestNode();
-        translateNodes({0, -lowestNode.getPos().second});
-
-        auto    base                = getBaseOfObject(lowestNode);
-        int     minXPointOnGround   = std::get<0>(base).getPos().first;
-        int     maxXPointOnGround   = std::get<1>(base).getPos().first;
-
-        centerGravity   = calculateCenterOfGravity();
+        centerGravity       = calculateCenterOfGravity();
+        rotation            = false;
 
         if (centerGravity < minXPointOnGround)
         {
             float alpha = findSmallestAngleFrom([](int pos, int point){return pos < point;}, minXPointOnGround);
-            rotateNodesAround(std::get<0>(base), alpha);
+            alpha = std::min(alpha, +1.0f * maxTurn);
 
-            // The center of mass has shifted after rotation.
-            // We need to restart the loop and try again to make sure we are stable.
-            continue;
+            rotateNodesAround(std::get<0>(base), alpha);
+            totalRotation += std::abs(alpha);
+            rotation = alpha != 0;
         }
         if (centerGravity > maxXPointOnGround)
         {
             float alpha = findSmallestAngleFrom([](int pos, int point){return pos > point;}, maxXPointOnGround);
+            alpha = std::max(alpha, -1.0f * maxTurn);
+
             rotateNodesAround(std::get<1>(base), alpha);
-
-            // The center of mass has shifted after rotation.
-            // We need to restart the loop and try again to make sure we are stable.
-            continue;
+            totalRotation += std::abs(alpha);
+            rotation = alpha != 0;
         }
-
-        // No Rotation required.
-        // We can break out of the loop.
-        break;
     }
-    while (true);
-    translateNodes({-centerGravity, 0});
+    while (totalRotation < std::abs(maxTurn) && rotation);
+    return centerGravity;
 }
 
 Node const& Walker::findLowestNode() const
@@ -290,11 +308,11 @@ float Walker::calculateCenterOfGravity() const
 
 void Walker::rotateNodesAround(Node const& cent, float alpha)
 {
-    auto centerOfRotation = cent.getPos();
+    Pos const& centerOfRotation = cent.getPos();
 
     for (auto& node: nodes)
     {
-        auto pos = node.getPos();
+        Pos pos = node.getPos();
         pos.first  -= centerOfRotation.first;
         pos.second -= centerOfRotation.second;
 
@@ -316,7 +334,7 @@ void Walker::translateNodes(Pos const& relative)
     }
 }
 
-Walker::Bound Walker::getBaseOfObject(Node& lowestNode) const
+Walker::Bound Walker::getBaseOfObject(Node const& lowestNode) const
 {
     int minXNodeOnGround;
     int maxXNodeOnGround;
@@ -392,8 +410,7 @@ void Walker::drawAnimation(wxDC& dc, int /*step*/) const
 
 void Walker::animationStepDo(wxDC& /*dc*/, int /*step*/)
 {
-    normalize();
-    applyGravity();
+    tick();
 }
 
 int Walker::animationMaxStep() const
@@ -404,4 +421,4 @@ int Walker::animationMaxStep() const
 wxSize Walker::getSize() const
 {
     return {1000, 500};
-
+}

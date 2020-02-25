@@ -77,6 +77,8 @@ class Walker: public ThorsUI::Animateable
     private:
         void normalize(int maxRep = 100);
         void applyGravity();
+        void dropAndFindRestingPoint();
+
         // Gravity Functions
         using Bound = std::tuple<Node const&, Node const&>;
 
@@ -84,9 +86,13 @@ class Walker: public ThorsUI::Animateable
         float       findSmallestAngleFrom(F const& test, int point) const;
         Node const& findLowestNode()                                const;
         float       calculateCenterOfGravity()                      const;
-        Bound       getBaseOfObject(Node& lowestNode)               const;
+        Bound       getBaseOfObject(Node const& lowestNode)         const;
+        Node const& dropToGround();
+        float       rotateAroundLowestPoint(Node const& lowest, float maxTurn);
         void        rotateNodesAround(Node const& node, float alpha);
         void        translateNodes(Pos const& relative);
+
+
 };
 
     }
