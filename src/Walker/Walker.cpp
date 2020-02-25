@@ -51,11 +51,10 @@ Muscle::Muscle()
     std::uniform_real_distribution<float>   lenDist(0.1, 1.0);
     std::uniform_real_distribution<float>   strenDist(0.1, 1.0);
 
-    extendedLen     = lenDist(generator);
-    contractLen     = lenDist(generator);
+    std::tie(contractLen, extendedLen) = std::minmax(lenDist(generator), lenDist(generator));
     strength        = strenDist(generator);
-    extendedTime    = timerDist(generator);
-    contractTime    = timerDist(generator);
+    extendedTime    = timerDist(generator) * 10;
+    contractTime    = timerDist(generator) * 10;
 
     currentSize = contractLen;
 }
