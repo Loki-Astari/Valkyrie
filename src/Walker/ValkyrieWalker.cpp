@@ -12,6 +12,7 @@ IMPLEMENT_APP(ValkyrieWalkerApp)
 BEGIN_EVENT_TABLE(ValkyrieWalkerFrame, wxFrame)
     EVT_MENU(wxID_ABOUT,        ValkyrieWalkerFrame::onAbout)
     EVT_MENU(wxID_EXIT,         ValkyrieWalkerFrame::onQuit)
+    EVT_BUTTON(BUTTON_SAVE_ID,  ValkyrieWalkerFrame::onSave)
 END_EVENT_TABLE()
 
 const wxCmdLineEntryDesc ValkyrieWalkerApp::cmdLineDesc[] =
@@ -82,12 +83,19 @@ bool ValkyrieWalkerApp::OnInit()
 /************ UI Frame ********************/
 
 ValkyrieWalkerFrame::ValkyrieWalkerFrame(std::vector<Walker>& walk)
-    : wxFrame(nullptr, wxID_ANY, wxT("Valkyrie"))
+    : wxFrame(nullptr, BUTTON_SAVE_ID, wxT("Valkyrie"))
     , walkers(walk)
 {
     buttons.reserve(walkers.size());
 
     wxSizer* sizer      = new wxBoxSizer(wxVERTICAL);
+
+    wxSizer* buttonSizer= new wxBoxSizer(wxHORIZONTAL);
+    sizer->Add(buttonSizer, wxSizerFlags());
+
+    wxButton* buttonSave = new wxButton(this, BUTTON_SAVE_ID, wxT("Save"));
+    buttonSizer->Add(buttonSave, wxSizerFlags());
+
 
     wxSizer* walkerSizer = new wxGridSizer(25, 5, 5);
     sizer->Add(walkerSizer, wxSizerFlags());
@@ -134,4 +142,13 @@ void ValkyrieWalkerFrame::onAbout(wxCommandEvent& /*event*/)
 void ValkyrieWalkerFrame::onQuit(wxCommandEvent& /*event*/)
 {
     Close();
+}
+
+void ValkyrieWalkerFrame::onSave(wxCommandEvent& /*event*/)
+{
+    std::ofstream   save("save.walker");
+    for (auto const& walker: walkers)
+    {
+        save << walker;
+    }
 }
