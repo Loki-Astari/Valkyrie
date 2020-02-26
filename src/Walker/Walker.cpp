@@ -483,7 +483,7 @@ int Walker::animationMaxStep() const
 
 wxSize Walker::getSize() const
 {
-    return {1000, 500};
+    return {500, 500};
 }
 
 namespace ThorsAnvil::ValkyrieWalker

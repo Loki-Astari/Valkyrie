@@ -1,5 +1,5 @@
 #include "ValkyrieWalker.h"
-#include <ThorsUI/UIPanelAnimateableSteper.h>
+#include <ThorsUI/UIPanelDrawable.h>
 #include <wx/filename.h>
 #include <fstream>
 
@@ -68,12 +68,12 @@ bool ValkyrieWalkerApp::OnInit()
         return false;
     }
 
-    while (walkers.size() < 1000)
+    while (walkers.size() < 625)
     {
         walkers.emplace_back();
     }
 
-    ValkyrieWalkerFrame* frame = new ValkyrieWalkerFrame(walkers[0]);
+    ValkyrieWalkerFrame* frame = new ValkyrieWalkerFrame(walkers);
 
     frame->Show(true);
     return true;
@@ -81,18 +81,23 @@ bool ValkyrieWalkerApp::OnInit()
 
 /************ UI Frame ********************/
 
-ValkyrieWalkerFrame::ValkyrieWalkerFrame(Walker& walk)
+ValkyrieWalkerFrame::ValkyrieWalkerFrame(std::vector<Walker>& walk)
     : wxFrame(nullptr, wxID_ANY, wxT("Valkyrie"))
-    , walker(walk)
+    , walkers(walk)
 {
+    buttons.reserve(walkers.size());
+
     wxSizer* sizer      = new wxBoxSizer(wxVERTICAL);
 
-    wxPanel* walkerPanel = new ThorsUI::PanelAnimateableSteper(this, walker);
+    wxSizer* walkerSizer = new wxGridSizer(25, 5, 5);
+    sizer->Add(walkerSizer, wxSizerFlags());
 
-    sizer->Add(walkerPanel, 1, 0, 10, nullptr);
-
-    wxSizer* robotSizer = new wxGridSizer(10, 5, 5);
-    sizer->Add(robotSizer, wxSizerFlags());
+    for(auto& walker: walkers)
+    {
+        buttons.emplace_back(walker, 1.0/10);
+        wxPanel* walkerPanel = new ThorsUI::PanelDrawable(this, buttons.back());
+        walkerSizer->Add(walkerPanel, 1, 0, 10, nullptr);
+    }
 
     wxSize clientArea = DoGetBestSize();
     clientArea.y += 32;
