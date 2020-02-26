@@ -203,6 +203,7 @@ void Walker::normalize(int maxRep)
     /*
      * Repeat for maxRep iterations or until the change in stress between iterations is 0
      */
+    bool broken = false;
     for (int repeat = 0; repeat < maxRep && std::abs(previosTotalStress - currentTotalStress) > 0; ++repeat)
     {
         previosTotalStress  = currentTotalStress;
@@ -224,6 +225,11 @@ void Walker::normalize(int maxRep)
                 int   yDist         = srcPos.second - dstPos.second;
                 float distSqr       = (xDist * xDist) + (yDist * yDist);
                 float dist          = std::sqrt(distSqr);
+                if (dist > 5000)
+                {
+                    broken = true;
+                    break;
+                }
 
                 float wantedDist    = muscles[con.first].getLen() * 1000;
 
@@ -251,6 +257,19 @@ void Walker::normalize(int maxRep)
         {
             nodes[loop].updatePos(forces[loop]);
         }
+    }
+    if (broken)
+    {
+        std::cerr << "Bad Node dropping\n";
+        std::cerr << (*this) << "\n";
+
+        // Clear out all the state.
+        nodes.clear();
+        muscles.clear();
+        connections.clear();
+
+        // Add one node so it will be drawn but can't move
+        nodes.emplace_back();
     }
 }
 
@@ -374,8 +393,8 @@ void Walker::translateNodes(Pos const& relative)
 
 Walker::Bound Walker::getBaseOfObject(Node const& lowestNode) const
 {
-    int minXNodeOnGround;
-    int maxXNodeOnGround;
+    int minXNodeOnGround    = -1;
+    int maxXNodeOnGround    = -1;
     int minXPointOnGround   = lowestNode.getPos().first;
     int maxXPointOnGround   = lowestNode.getPos().first;
 
@@ -398,6 +417,12 @@ Walker::Bound Walker::getBaseOfObject(Node const& lowestNode) const
                 maxXNodeOnGround    = loop;
             }
         }
+    }
+    if (minXNodeOnGround == -1 || maxXNodeOnGround == -1)
+    {
+        std::cerr << "Failed in getBaseOfObject\n";
+        std::cerr << (*this) << "\n";
+        throw std::runtime_error("Bad Node\n");
     }
 
     return std::tie(nodes[minXNodeOnGround], nodes[maxXNodeOnGround]);
