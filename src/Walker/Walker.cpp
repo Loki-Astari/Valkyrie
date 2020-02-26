@@ -1,5 +1,8 @@
 #include "Walker.h"
 #include <cmath>
+#include <sstream>
+#include <iterator>
+
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
@@ -12,14 +15,21 @@ int Clock::tick()
     return ++time;
 }
 
+void Clock::reset()
+{
+    time = 0;
+}
+
 Node::Node()
 {
     std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
     std::uniform_int_distribution<int>      positionDist(0, 1000);
     std::uniform_int_distribution<int>      massDist(1, 10);
 
-    position    = {positionDist(generator), positionDist(generator)};
+    startState  = {positionDist(generator), positionDist(generator)};
     mass        = massDist(generator);
+
+    position    = startState;
 }
 
 Pos const& Node::getPos() const
@@ -41,6 +51,17 @@ void Node::updatePos(Force const& force)
 void Node::setPos(Pos const& p)
 {
     position = p;
+}
+
+void Node::load(std::istream& stream)
+{
+    stream >> startState.first >> startState.second >> mass;
+    position    = startState;
+}
+
+void Node::save(std::ostream& stream) const
+{
+    stream << startState.first << " " << startState.second << " " << mass << " ";
 }
 
 Muscle::Muscle()
@@ -78,6 +99,23 @@ void Muscle::tick(int tick)
 float Muscle::getLen() const
 {
     return currentSize;
+}
+
+void Muscle::load(std::istream& stream)
+{
+    stream >> extendedLen >> contractLen >> strength >> extendedTime >> contractTime;
+    currentSize = contractLen;
+    currentTick = 0;
+}
+
+void Muscle::save(std::ostream& stream) const
+{
+    stream << extendedLen << " " << contractLen << " " << strength << " " << extendedTime << " " << contractTime << " ";
+}
+
+Walker::Walker(std::istream& stream)
+{
+    stream >> (*this);
 }
 
 Walker::Walker()
@@ -421,4 +459,76 @@ int Walker::animationMaxStep() const
 wxSize Walker::getSize() const
 {
     return {1000, 500};
+}
+
+namespace ThorsAnvil::ValkyrieWalker
+{
+    using InValue = std::pair<int, std::pair<int, int>>;
+
+    std::istream& operator>>(std::istream& stream, InValue& data)
+    {
+        return stream >> data.first >> data.second.first >> data.second.second;
+    }
+    std::ostream& operator<<(std::ostream& stream, InValue const& data)
+    {
+        return stream << data.first << " " <<  data.second.first << " " <<  data.second.second << " ";
+    }
+}
+
+void Walker::load(std::istream& stream)
+{
+    std::vector<Node>       tmpNode;
+    std::vector<Muscle>     tmpMuscle;
+    std::map<int, Con>      tmpConection;
+    int count = 0;
+
+    std::string line;
+    if (std::getline(stream, line))
+    {
+        std::stringstream   lineStream(line);
+        tmpNode.insert(tmpNode.end(), std::istream_iterator<Node>(lineStream), std::istream_iterator<Node>());
+        ++count;
+    }
+    if (std::getline(stream, line))
+    {
+        std::stringstream   lineStream(line);
+        tmpMuscle.insert(tmpMuscle.end(), std::istream_iterator<Muscle>(lineStream), std::istream_iterator<Muscle>());
+        ++count;
+    }
+    if (std::getline(stream, line))
+    {
+        std::stringstream   lineStream(line);
+        InValue             tmp;
+        while (lineStream >> tmp)
+        {
+            tmpConection[tmp.first] = tmp.second;
+        }
+        ++count;
+    }
+    if (count == 3)
+    {
+        using std::swap;
+        swap(nodes,      tmpNode);
+        swap(muscles,    tmpMuscle);
+        swap(connections,tmpConection);
+
+        clock.reset();
+        normalize();
+        dropAndFindRestingPoint();
+    }
+}
+
+void Walker::save(std::ostream& stream) const
+{
+    std::copy(std::begin(nodes), std::end(nodes), std::ostream_iterator<Node>(stream));
+    stream << "\n";
+
+    std::copy(std::begin(muscles), std::end(muscles), std::ostream_iterator<Muscle>(stream));
+    stream << "\n";
+
+    for (auto const& connect: connections)
+    {
+        stream << connect;
+    }
+    stream << "\n";
 }

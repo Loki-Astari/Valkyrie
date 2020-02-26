@@ -23,10 +23,12 @@ class Clock
     public:
         Clock();
         int tick();
+        void reset();
 };
 
 class Node
 {
+    Pos         startState;
     Pos         position;
     int         mass;
     public:
@@ -36,6 +38,12 @@ class Node
         int         getMass()   const;
         void updatePos(Force const& f);
         void setPos(Pos const& p);
+
+        void load(std::istream& stream);
+        void save(std::ostream& stream) const;
+
+        friend std::ostream& operator<<(std::ostream& stream, Node const& n)    {n.save(stream);return stream;}
+        friend std::istream& operator>>(std::istream& stream, Node& n)          {n.load(stream);return stream;}
 };
 
 class Muscle
@@ -54,11 +62,19 @@ class Muscle
         Muscle();
         float getLen() const;
         void tick(int tick);
+
+        void load(std::istream& stream);
+        void save(std::ostream& stream) const;
+
+        friend std::ostream& operator<<(std::ostream& stream, Muscle const& m)  {m.save(stream);return stream;}
+        friend std::istream& operator>>(std::istream& stream, Muscle& m)        {m.load(stream);return stream;}
 };
 
 class Walker: public ThorsUI::Animateable
 {
-    using Con = std::pair<int, int>;
+    public:
+        using Con = std::pair<int, int>;
+    private:
 
     Clock                   clock;
     std::vector<Node>       nodes;
@@ -66,6 +82,7 @@ class Walker: public ThorsUI::Animateable
     std::map<int, Con>      connections;
     public:
         Walker();
+        Walker(std::istream& stream);
         void tick();
 
         virtual wxSize  getSize()                           const   override;
@@ -92,7 +109,11 @@ class Walker: public ThorsUI::Animateable
         void        rotateNodesAround(Node const& node, float alpha);
         void        translateNodes(Pos const& relative);
 
+        void load(std::istream& stream);
+        void save(std::ostream& stream) const;
 
+        friend std::istream& operator>>(std::istream& stream, Walker& data)         {data.load(stream);return stream;}
+        friend std::ostream& operator<<(std::ostream& stream, Walker const& data)   {data.save(stream);return stream;}
 };
 
     }

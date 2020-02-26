@@ -31,17 +31,15 @@ class ValkyrieWalkerFrame: public wxFrame
 
 class ValkyrieWalkerApp: public wxApp
 {
-    struct SeedSetter
-    {
-        SeedSetter();
-    };
-    SeedSetter      setter;
-    Walker          walker;
+    static const wxCmdLineEntryDesc cmdLineDesc[];
+    std::vector<Walker> walkers;
 
     public:
 #pragma vera-pushoff
         virtual bool OnInit() override;
 #pragma vera-pop
+    private:
+        bool parseCommandLine();
 };
 
     }
