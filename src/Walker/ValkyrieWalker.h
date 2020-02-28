@@ -43,6 +43,7 @@ class WalkerButton: public ThorsAnvil::ThorsUI::Drawable
 class ValkyrieWalkerFrame: public wxFrame
 {
     static constexpr int BUTTON_SAVE_ID       = wxID_HIGHEST + 1;
+    static constexpr int BUTTON_RUN1_ID       = wxID_HIGHEST + 2;
 
     std::vector<Walker>&        walkers;
     std::vector<WalkerButton>   buttons;
@@ -54,6 +55,7 @@ class ValkyrieWalkerFrame: public wxFrame
         void onQuit(wxCommandEvent& event);
         void onAbout(wxCommandEvent& event);
         void onSave(wxCommandEvent& event);
+        void onRun1(wxCommandEvent& event);
 
         DECLARE_EVENT_TABLE()
 };

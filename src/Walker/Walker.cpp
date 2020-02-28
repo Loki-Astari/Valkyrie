@@ -181,7 +181,7 @@ Walker::Walker()
     dropAndFindRestingPoint();
 }
 
-void Walker::tick()
+int Walker::tick()
 {
     int nextTick = clock.tick();
     for (auto& m: muscles)
@@ -189,7 +189,7 @@ void Walker::tick()
         m.tick(nextTick);
     }
     normalize();
-    applyGravity();
+    return applyGravity();
 }
 
 void Walker::normalize(int maxRep)
@@ -260,8 +260,8 @@ void Walker::normalize(int maxRep)
     }
     if (broken)
     {
-        std::cerr << "Bad Node dropping\n";
-        std::cerr << (*this) << "\n";
+        //std::cerr << "Bad Node dropping\n";
+        //std::cerr << (*this) << "\n";
 
         // Clear out all the state.
         nodes.clear();
@@ -281,10 +281,10 @@ void Walker::dropAndFindRestingPoint()
     translateNodes({-centerGravity, 0});
 }
 
-void Walker::applyGravity()
+float Walker::applyGravity()
 {
     Node const&    lowestNode          = dropToGround();
-    rotateAroundLowestPoint(lowestNode, 2 * M_PI * 15 / 360);
+    return rotateAroundLowestPoint(lowestNode, 2 * M_PI * 15 / 360);
 }
 
 Node const& Walker::dropToGround()

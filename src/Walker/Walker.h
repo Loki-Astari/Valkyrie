@@ -83,7 +83,7 @@ class Walker: public ThorsUI::Animateable
     public:
         Walker();
         Walker(std::istream& stream);
-        void tick();
+        int tick();
 
         virtual wxSize  getSize()                           const   override;
         virtual void    drawAnimation(wxDC& dc, int step)   const   override;
@@ -93,7 +93,7 @@ class Walker: public ThorsUI::Animateable
         virtual int     animationMaxStep()                  const   override;
     private:
         void normalize(int maxRep = 100);
-        void applyGravity();
+        float applyGravity();
         void dropAndFindRestingPoint();
 
         // Gravity Functions

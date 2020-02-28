@@ -1,6 +1,7 @@
 #include "ValkyrieWalker.h"
 #include <ThorsUI/UIPanelDrawable.h>
 #include <wx/filename.h>
+#include <wx/progdlg.h>
 #include <fstream>
 
 using namespace ThorsAnvil::ValkyrieWalker;
@@ -13,6 +14,7 @@ BEGIN_EVENT_TABLE(ValkyrieWalkerFrame, wxFrame)
     EVT_MENU(wxID_ABOUT,        ValkyrieWalkerFrame::onAbout)
     EVT_MENU(wxID_EXIT,         ValkyrieWalkerFrame::onQuit)
     EVT_BUTTON(BUTTON_SAVE_ID,  ValkyrieWalkerFrame::onSave)
+    EVT_BUTTON(BUTTON_RUN1_ID,  ValkyrieWalkerFrame::onRun1)
 END_EVENT_TABLE()
 
 const wxCmdLineEntryDesc ValkyrieWalkerApp::cmdLineDesc[] =
@@ -94,7 +96,9 @@ ValkyrieWalkerFrame::ValkyrieWalkerFrame(std::vector<Walker>& walk)
     sizer->Add(buttonSizer, wxSizerFlags());
 
     wxButton* buttonSave = new wxButton(this, BUTTON_SAVE_ID, wxT("Save"));
+    wxButton* buttonRun  = new wxButton(this, BUTTON_RUN1_ID, wxT("Run 1"));
     buttonSizer->Add(buttonSave, wxSizerFlags());
+    buttonSizer->Add(buttonRun,  wxSizerFlags());
 
 
     wxSizer* walkerSizer = new wxGridSizer(25, 5, 5);
@@ -152,3 +156,29 @@ void ValkyrieWalkerFrame::onSave(wxCommandEvent& /*event*/)
         save << walker;
     }
 }
+void ValkyrieWalkerFrame::onRun1(wxCommandEvent& /*event*/)
+{
+    wxProgressDialog dialog(wxT("Running all Walkers: "), wxT("Progress: "), 105, this, wxPD_APP_MODAL);
+    int bestScore = -10000;
+    int count = 0;
+    for(auto& walker: walkers)
+    {
+        float minScore = 0;
+        float maxScore = 0;
+        float score;
+        for(int loop =0; loop < 3000; ++loop)
+        {
+            score = walker.tick();
+            minScore = std::min(minScore, score);
+            maxScore = std::max(maxScore, score);
+        }
+        //std::cout << "minScore: " << minScore << " maxScore: " << maxScore << " Score: " << score << "\n";
+        bestScore = std::max(bestScore, static_cast<int>(score));
+        if (count % 6 == 0) {
+            dialog.Update(count / 6);
+        }
+        ++count;
+    }
+    std::cout << "Best Score: " << bestScore << "\n";
+}
+
