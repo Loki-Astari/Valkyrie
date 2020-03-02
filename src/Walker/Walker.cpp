@@ -26,10 +26,8 @@ Node::Node()
     std::uniform_int_distribution<int>      positionDist(0, 1000);
     std::uniform_int_distribution<int>      massDist(1, 10);
 
-    startState  = {positionDist(generator), positionDist(generator)};
+    position    = {positionDist(generator), positionDist(generator)};
     mass        = massDist(generator);
-
-    position    = startState;
 }
 
 Pos const& Node::getPos() const
@@ -58,10 +56,15 @@ void Node::reset()
     position = startState;
 }
 
+void Node::setStartState()
+{
+    startState = position;
+}
+
 void Node::load(std::istream& stream)
 {
     stream >> startState.first >> startState.second >> mass;
-    position    = startState;
+    reset();
 }
 
 void Node::save(std::ostream& stream) const
@@ -103,8 +106,13 @@ void Muscle::tick(int tick)
 
 void Muscle::reset()
 {
-    currentSize = contractLen;
-    currentTick = 0;;
+    currentSize = startState;
+    currentTick = 0;
+}
+
+void Muscle::setStartState()
+{
+    startState = currentSize;
 }
 
 float Muscle::getLen() const
@@ -114,14 +122,13 @@ float Muscle::getLen() const
 
 void Muscle::load(std::istream& stream)
 {
-    stream >> extendedLen >> contractLen >> strength >> extendedTime >> contractTime;
-    currentSize = contractLen;
-    currentTick = 0;
+    stream >> startState >> extendedLen >> contractLen >> strength >> extendedTime >> contractTime;
+    reset();
 }
 
 void Muscle::save(std::ostream& stream) const
 {
-    stream << extendedLen << " " << contractLen << " " << strength << " " << extendedTime << " " << contractTime << " ";
+    stream << startState << " " << extendedLen << " " << contractLen << " " << strength << " " << extendedTime << " " << contractTime << " ";
 }
 
 Walker::Walker(std::istream& stream)
@@ -190,6 +197,7 @@ Walker::Walker()
     }
     normalize();
     dropAndFindRestingPoint();
+    setStartState();
 }
 
 void Walker::run()
@@ -225,8 +233,18 @@ void Walker::reset()
     {
         muscle.reset();
     }
-    normalize();
-    dropAndFindRestingPoint();
+}
+
+void Walker::setStartState()
+{
+    for (auto& node: nodes)
+    {
+        node.setStartState();
+    }
+    for (auto& muscle: muscles)
+    {
+        muscle.setStartState();
+    }
 }
 
 void Walker::normalize(int maxRep)

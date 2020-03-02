@@ -38,7 +38,9 @@ class Node
         int         getMass()   const;
         void updatePos(Force const& f);
         void setPos(Pos const& p);
+
         void reset();
+        void setStartState();
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -56,6 +58,7 @@ class Muscle
     int         extendedTime;
     int         contractTime;
 
+    float       startState;
     float       currentSize;
     int         currentTick;
 
@@ -63,7 +66,9 @@ class Muscle
         Muscle();
         float getLen() const;
         void tick(int tick);
+
         void reset();
+        void setStartState();
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -98,6 +103,8 @@ class Walker: public ThorsUI::Animateable
         virtual int     animationMaxStep()                  const   override;
     private:
         void reset();
+        void setStartState();
+
         void normalize(int maxRep = 100);
         float applyGravity();
         void dropAndFindRestingPoint();
