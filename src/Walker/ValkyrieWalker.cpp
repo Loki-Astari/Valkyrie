@@ -131,9 +131,7 @@ ValkyrieWalkerFrame::ValkyrieWalkerFrame(std::vector<Walker>& walk)
     CreateStatusBar(2);
     SetStatusText(wxT("Welcome to Valkyrie"));
 
-    SetSizer(sizer);
-    sizer->Fit(this);
-    sizer->SetSizeHints(this);
+    SetSizerAndFit(sizer);
 }
 
 

@@ -19,7 +19,7 @@ PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walker
         wxPanel* walkerPanel = new ThorsUI::PanelDrawable(this, buttons.back());
         walkerSizer->Add(walkerPanel, 1, 0, 0, nullptr);
     }
-    SetSizer(walkerSizer);
+    SetSizerAndFit(walkerSizer);
 }
 
 void PanelWalkerCrowd::shuffle()
@@ -73,7 +73,8 @@ void PanelWalkerCrowd::evolve()
 
 wxSize PanelWalkerCrowd::getSize() const
 {
-    return wxSize{2000, 2000};
+    wxSizer*        sizer = GetSizer();
+    return sizer->GetMinSize();
 }
 
 void PanelWalkerCrowd::animateResetActionDone(wxDC& /*dc*/)
