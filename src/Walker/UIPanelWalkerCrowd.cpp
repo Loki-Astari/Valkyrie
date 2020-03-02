@@ -6,6 +6,8 @@ using namespace ThorsAnvil::ValkyrieWalker;
 
 PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walkers)
     : PanelSpriteRunner(parent)
+    , walkers(walkers)
+    , panelSizer(nullptr)
 {
     buttons.reserve(walkers.size());
 
@@ -20,11 +22,20 @@ PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walker
     SetSizer(walkerSizer);
 }
 
-void PanelWalkerCrowd::shuffle(std::vector<int>&& nO)
+void PanelWalkerCrowd::shuffle()
 {
-    newOrder    = std::move(nO);
+    if (panelSizer)
+    {
+        return;
+    }
+    panelSizer = GetSizer();
 
-    wxSizer*    panelSizer = GetSizer();
+    std::vector<int>    newOrder;
+    for (std::size_t loop = 0; loop < walkers.size(); ++ loop)
+    {
+        newOrder.emplace_back(loop);
+    }
+    std::stable_sort(std::begin(newOrder), std::end(newOrder), [&walkers = this->walkers](int lhs, int rhs){return walkers[lhs].score() > walkers[rhs].score();});
 
     std::vector<wxWindow*>  windows;
 
@@ -42,10 +53,6 @@ void PanelWalkerCrowd::shuffle(std::vector<int>&& nO)
         wxPoint             end     = windows[loop]->GetPosition();
         int                 dis     = std::sqrt((start.x - end.x) * (start.x - end.x) + (start.y - end.y) * (start.y - end.y));
         int                 move    = dis / 15;
-        if (move == 0)
-        {
-            continue;
-        }
 
         ThorsUtil::Pos      startP{start.x, start.y};
         ThorsUtil::Delta    delta{(end.x - start.x) * 1.0 / move, (end.y - start.y) * 1.0 / move};
@@ -56,13 +63,21 @@ void PanelWalkerCrowd::shuffle(std::vector<int>&& nO)
             pos.x += step * delta.first;
             pos.y += step * delta.second;
             window->Move(pos);
-        }, startP, delta, move);
+        }, startP, delta, move + 1);
     }
 }
 
 wxSize PanelWalkerCrowd::getSize() const
 {
     return wxSize{2000, 2000};
+}
+
+void PanelWalkerCrowd::animateResetActionDone(wxDC& /*dc*/)
+{
+    std::stable_sort(std::begin(walkers), std::end(walkers), [](Walker const& lhs, Walker const& rhs){return lhs.score() > rhs.score();});
+    panelSizer->Layout();
+    panelSizer = nullptr;
+    Refresh();
 }
 
 PanelWalkerCrowd::WalkerButton::WalkerButton(Walker& w, float scale)

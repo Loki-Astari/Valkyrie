@@ -176,11 +176,5 @@ void ValkyrieWalkerFrame::onRun1(wxCommandEvent& /*event*/)
 
 void ValkyrieWalkerFrame::onSort(wxCommandEvent& /*event*/)
 {
-    std::vector<int>    reOrder;
-    for (std::size_t loop = 0; loop < walkers.size(); ++ loop)
-    {
-        reOrder.emplace_back(loop);
-    }
-    std::sort(std::begin(reOrder), std::end(reOrder), [&walkers = this->walkers](int lhs, int rhs){return walkers[lhs].score() > walkers[rhs].score();});
-    panelWalker->shuffle(std::move(reOrder));
+    panelWalker->shuffle();
 }
