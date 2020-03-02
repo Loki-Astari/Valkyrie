@@ -32,6 +32,7 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
         PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walkers);
 
         void shuffle();
+        void evolve();
     private:
         virtual wxSize  getSize()                           const override;
         virtual void    animateResetActionDone(wxDC& dc)          override;

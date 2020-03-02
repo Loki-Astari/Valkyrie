@@ -17,6 +17,7 @@ BEGIN_EVENT_TABLE(ValkyrieWalkerFrame, wxFrame)
     EVT_BUTTON(BUTTON_SAVE_ID,  ValkyrieWalkerFrame::onSave)
     EVT_BUTTON(BUTTON_RUN1_ID,  ValkyrieWalkerFrame::onRun1)
     EVT_BUTTON(BUTTON_SORT_ID,  ValkyrieWalkerFrame::onSort)
+    EVT_BUTTON(BUTTON_EVOLVE_ID,ValkyrieWalkerFrame::onEvolve)
 END_EVENT_TABLE()
 
 const wxCmdLineEntryDesc ValkyrieWalkerApp::cmdLineDesc[] =
@@ -96,11 +97,13 @@ ValkyrieWalkerFrame::ValkyrieWalkerFrame(std::vector<Walker>& walk)
     wxButton* buttonSave = new wxButton(panelButton, BUTTON_SAVE_ID, wxT("Save"));
     wxButton* buttonRun  = new wxButton(panelButton, BUTTON_RUN1_ID, wxT("Run 1"));
     wxButton* buttonSort = new wxButton(panelButton, BUTTON_SORT_ID, wxT("Sort"));
+    wxButton* buttonEvlv = new wxButton(panelButton, BUTTON_EVOLVE_ID, wxT("Evolve"));
 
     wxSizer* buttonSizer = new wxStdDialogButtonSizer();
     buttonSizer->Add(buttonSave, wxSizerFlags());
     buttonSizer->Add(buttonRun,  wxSizerFlags());
     buttonSizer->Add(buttonSort, wxSizerFlags());
+    buttonSizer->Add(buttonEvlv, wxSizerFlags());
     panelButton->SetSizer(buttonSizer);
 
     panelWalker = new PanelWalkerCrowd(this, walkers);
@@ -177,4 +180,9 @@ void ValkyrieWalkerFrame::onRun1(wxCommandEvent& /*event*/)
 void ValkyrieWalkerFrame::onSort(wxCommandEvent& /*event*/)
 {
     panelWalker->shuffle();
+}
+
+void ValkyrieWalkerFrame::onEvolve(wxCommandEvent& /*event*/)
+{
+    panelWalker->evolve();
 }

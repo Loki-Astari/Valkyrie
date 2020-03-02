@@ -67,6 +67,10 @@ void PanelWalkerCrowd::shuffle()
     }
 }
 
+void PanelWalkerCrowd::evolve()
+{
+}
+
 wxSize PanelWalkerCrowd::getSize() const
 {
     return wxSize{2000, 2000};
