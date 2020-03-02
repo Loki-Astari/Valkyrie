@@ -53,6 +53,11 @@ void Node::setPos(Pos const& p)
     position = p;
 }
 
+void Node::reset()
+{
+    position = startState;
+}
+
 void Node::load(std::istream& stream)
 {
     stream >> startState.first >> startState.second >> mass;
@@ -94,6 +99,12 @@ void Muscle::tick(int tick)
         currentTick -= extendedTime;
         currentSize = extendedLen - (1.0 * currentTick / contractTime * (extendedLen - contractLen));
     }
+}
+
+void Muscle::reset()
+{
+    currentSize = contractLen;
+    currentTick = 0;;
 }
 
 float Muscle::getLen() const
@@ -181,6 +192,17 @@ Walker::Walker()
     dropAndFindRestingPoint();
 }
 
+void Walker::run()
+{
+    float score = 0;
+    for (int loop = 0; loop < 3000; ++loop)
+    {
+        score = tick();
+    }
+    currentScore = score;
+    reset();
+}
+
 int Walker::tick()
 {
     int nextTick = clock.tick();
@@ -190,6 +212,21 @@ int Walker::tick()
     }
     normalize();
     return applyGravity();
+}
+
+void Walker::reset()
+{
+    clock.reset();
+    for (auto& node: nodes)
+    {
+        node.reset();
+    }
+    for (auto& muscle: muscles)
+    {
+        muscle.reset();
+    }
+    normalize();
+    dropAndFindRestingPoint();
 }
 
 void Walker::normalize(int maxRep)
@@ -421,7 +458,7 @@ Walker::Bound Walker::getBaseOfObject(Node const& lowestNode) const
     if (minXNodeOnGround == -1 || maxXNodeOnGround == -1)
     {
         std::cerr << "Failed in getBaseOfObject\n";
-        std::cerr << (*this) << "\n";
+        //std::cerr << (*this) << "\n";
         throw std::runtime_error("Bad Node\n");
     }
 

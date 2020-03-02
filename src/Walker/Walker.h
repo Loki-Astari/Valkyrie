@@ -38,6 +38,7 @@ class Node
         int         getMass()   const;
         void updatePos(Force const& f);
         void setPos(Pos const& p);
+        void reset();
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -62,6 +63,7 @@ class Muscle
         Muscle();
         float getLen() const;
         void tick(int tick);
+        void reset();
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -80,9 +82,12 @@ class Walker: public ThorsUI::Animateable
     std::vector<Node>       nodes;
     std::vector<Muscle>     muscles;
     std::map<int, Con>      connections;
+    int                     currentScore;
     public:
         Walker();
         Walker(std::istream& stream);
+        void run();
+        int  score() const {return currentScore;}
         int tick();
 
         virtual wxSize  getSize()                           const   override;
@@ -92,6 +97,7 @@ class Walker: public ThorsUI::Animateable
         virtual void    animationStepDo(wxDC& dc, int step)         override;
         virtual int     animationMaxStep()                  const   override;
     private:
+        void reset();
         void normalize(int maxRep = 100);
         float applyGravity();
         void dropAndFindRestingPoint();

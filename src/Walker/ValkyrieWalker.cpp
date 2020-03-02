@@ -1,5 +1,6 @@
 #include "ValkyrieWalker.h"
 #include <ThorsUI/UIPanelDrawable.h>
+#include <ThorsUtil/BackgroundWorker.h>
 #include <wx/filename.h>
 #include <wx/progdlg.h>
 #include <fstream>
@@ -15,6 +16,7 @@ BEGIN_EVENT_TABLE(ValkyrieWalkerFrame, wxFrame)
     EVT_MENU(wxID_EXIT,         ValkyrieWalkerFrame::onQuit)
     EVT_BUTTON(BUTTON_SAVE_ID,  ValkyrieWalkerFrame::onSave)
     EVT_BUTTON(BUTTON_RUN1_ID,  ValkyrieWalkerFrame::onRun1)
+    EVT_BUTTON(BUTTON_SORT_ID,  ValkyrieWalkerFrame::onSort)
 END_EVENT_TABLE()
 
 const wxCmdLineEntryDesc ValkyrieWalkerApp::cmdLineDesc[] =
@@ -87,29 +89,25 @@ bool ValkyrieWalkerApp::OnInit()
 ValkyrieWalkerFrame::ValkyrieWalkerFrame(std::vector<Walker>& walk)
     : wxFrame(nullptr, BUTTON_SAVE_ID, wxT("Valkyrie"))
     , walkers(walk)
+    , panelWalker(nullptr)
 {
-    buttons.reserve(walkers.size());
 
-    wxSizer* sizer      = new wxBoxSizer(wxVERTICAL);
+    wxPanel*  panelButton= new wxPanel(this);
+    wxButton* buttonSave = new wxButton(panelButton, BUTTON_SAVE_ID, wxT("Save"));
+    wxButton* buttonRun  = new wxButton(panelButton, BUTTON_RUN1_ID, wxT("Run 1"));
+    wxButton* buttonSort = new wxButton(panelButton, BUTTON_SORT_ID, wxT("Sort"));
 
-    wxSizer* buttonSizer= new wxBoxSizer(wxHORIZONTAL);
-    sizer->Add(buttonSizer, wxSizerFlags());
-
-    wxButton* buttonSave = new wxButton(this, BUTTON_SAVE_ID, wxT("Save"));
-    wxButton* buttonRun  = new wxButton(this, BUTTON_RUN1_ID, wxT("Run 1"));
+    wxSizer* buttonSizer = new wxStdDialogButtonSizer();
     buttonSizer->Add(buttonSave, wxSizerFlags());
     buttonSizer->Add(buttonRun,  wxSizerFlags());
+    buttonSizer->Add(buttonSort, wxSizerFlags());
+    panelButton->SetSizer(buttonSizer);
 
+    panelWalker = new PanelWalkerCrowd(this, walkers);
 
-    wxSizer* walkerSizer = new wxGridSizer(25, 5, 5);
-    sizer->Add(walkerSizer, wxSizerFlags());
-
-    for(auto& walker: walkers)
-    {
-        buttons.emplace_back(walker, 1.0/10);
-        wxPanel* walkerPanel = new ThorsUI::PanelDrawable(this, buttons.back());
-        walkerSizer->Add(walkerPanel, 1, 0, 10, nullptr);
-    }
+    wxSizer* sizer      = new wxBoxSizer(wxVERTICAL);
+    sizer->Add(panelButton, wxSizerFlags());
+    sizer->Add(panelWalker, wxSizerFlags());
 
     wxSize clientArea = DoGetBestSize();
     clientArea.y += 32;
@@ -156,29 +154,33 @@ void ValkyrieWalkerFrame::onSave(wxCommandEvent& /*event*/)
         save << walker;
     }
 }
+
 void ValkyrieWalkerFrame::onRun1(wxCommandEvent& /*event*/)
 {
-    wxProgressDialog dialog(wxT("Running all Walkers: "), wxT("Progress: "), 105, this, wxPD_APP_MODAL);
-    int bestScore = -10000;
-    int count = 0;
-    for(auto& walker: walkers)
+    int count = walkers.size();
+    int div   = count / 100;
+    int max   = count / div + 1;
+
+    wxProgressDialog dialog(wxT("Running all Walkers: "), wxT("Progress: "), max, this, wxPD_APP_MODAL);
+    count = 0;
+    for (auto& walker: walkers)
     {
-        float minScore = 0;
-        float maxScore = 0;
-        float score;
-        for(int loop =0; loop < 3000; ++loop)
+        walker.run();
+        if (count % div == 0)
         {
-            score = walker.tick();
-            minScore = std::min(minScore, score);
-            maxScore = std::max(maxScore, score);
-        }
-        //std::cout << "minScore: " << minScore << " maxScore: " << maxScore << " Score: " << score << "\n";
-        bestScore = std::max(bestScore, static_cast<int>(score));
-        if (count % 6 == 0) {
-            dialog.Update(count / 6);
+            dialog.Update(count / div);
         }
         ++count;
     }
-    std::cout << "Best Score: " << bestScore << "\n";
 }
 
+void ValkyrieWalkerFrame::onSort(wxCommandEvent& /*event*/)
+{
+    std::vector<int>    reOrder;
+    for (std::size_t loop = 0; loop < walkers.size(); ++ loop)
+    {
+        reOrder.emplace_back(loop);
+    }
+    std::sort(std::begin(reOrder), std::end(reOrder), [&walkers = this->walkers](int lhs, int rhs){return walkers[lhs].score() > walkers[rhs].score();});
+    panelWalker->shuffle(std::move(reOrder));
+}

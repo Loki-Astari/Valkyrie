@@ -3,6 +3,7 @@
 
 #include "ValkyrieWalkerConfig.h"
 #include "Walker.h"
+#include "UIPanelWalkerCrowd.h"
 
 #include <ThorsUI/Animateable.h>
 #include <wx/wx.h>
@@ -15,38 +16,14 @@ namespace ThorsAnvil
     namespace ValkyrieWalker
     {
 
-class WalkerButton: public ThorsAnvil::ThorsUI::Drawable
-{
-    Walker&     walker;
-    float       scale;
-    public:
-        WalkerButton(Walker& w, float scale)
-            : walker(w)
-            , scale(scale)
-        {}
-        virtual void    draw(wxDC& dc)  const override
-        {
-            wxSize size = getSize();
-            dc.SetLogicalOrigin(size.x / 2, 0);
-            dc.SetLogicalScale(scale, scale);
-            walker.draw(dc);
-        }
-        virtual wxSize  getSize()       const override
-        {
-            wxSize  result  = walker.getSize();
-            result.x *= scale;
-            result.y *= scale;
-            return result;
-        }
-};
-
 class ValkyrieWalkerFrame: public wxFrame
 {
     static constexpr int BUTTON_SAVE_ID       = wxID_HIGHEST + 1;
     static constexpr int BUTTON_RUN1_ID       = wxID_HIGHEST + 2;
+    static constexpr int BUTTON_SORT_ID       = wxID_HIGHEST + 3;
 
     std::vector<Walker>&        walkers;
-    std::vector<WalkerButton>   buttons;
+    PanelWalkerCrowd*           panelWalker;
 
     public:
         ValkyrieWalkerFrame(std::vector<Walker>& walkers);
@@ -56,6 +33,7 @@ class ValkyrieWalkerFrame: public wxFrame
         void onAbout(wxCommandEvent& event);
         void onSave(wxCommandEvent& event);
         void onRun1(wxCommandEvent& event);
+        void onSort(wxCommandEvent& event);
 
         DECLARE_EVENT_TABLE()
 };
