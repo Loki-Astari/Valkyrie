@@ -74,7 +74,7 @@ bool ValkyrieWalkerApp::OnInit()
         return false;
     }
 
-    while (walkers.size() < 625)
+    while (walkers.size() < 100)
     {
         walkers.emplace_back();
     }
