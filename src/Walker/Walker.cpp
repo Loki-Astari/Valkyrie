@@ -362,7 +362,7 @@ float Walker::rotateAroundLowestPoint(Node const& lowestNode, float maxTurn)
     bool    rotation;
     do
     {
-        centerGravity       = calculateCenterOfGravity();
+        centerGravity       = calculateCenterOfGravity().first;
         rotation            = false;
 
         if (centerGravity < minXPointOnGround)
@@ -403,17 +403,19 @@ Node const& Walker::findLowestNode() const
     return nodes[lowestNode];
 }
 
-float Walker::calculateCenterOfGravity() const
+Walker::CM Walker::calculateCenterOfGravity() const
 {
     int     totalMass       = 0;
-    int     turningMomentum = 0;
+    int     momentX         = 0;
+    int     momentY         = 0;
     for (std::size_t loop = 0; loop < nodes.size(); ++loop)
     {
         int currentMass = nodes[loop].getMass();
         totalMass       += currentMass;
-        turningMomentum += nodes[loop].getPos().first * currentMass;
+        momentX         += nodes[loop].getPos().first * currentMass;
+        momentY         += nodes[loop].getPos().second * currentMass;
     }
-    float   centerGravity   = 1.0 * turningMomentum / totalMass;
+    CM   centerGravity   {1.0 * momentX / totalMass, 1.0 * momentY / totalMass};
 
     return centerGravity;
 }
@@ -524,6 +526,8 @@ void Walker::drawAnimation(wxDC& dc, int /*step*/) const
         dc.DrawCircle(toScreen(nodes[loop].getPos()), 10);
         dc.DrawText(std::to_string(loop).c_str(), toScreen(nodes[loop].getPos(), -3, +7));
     }
+    dc.SetBrush(*wxRED_BRUSH);
+    dc.DrawCircle(toScreen(calculateCenterOfGravity()), 30);
 }
 
 void Walker::animationStepDo(wxDC& /*dc*/, int /*step*/)

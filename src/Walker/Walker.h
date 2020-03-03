@@ -82,6 +82,7 @@ class Walker: public ThorsUI::Animateable
     public:
         using Con = std::pair<int, int>;
     private:
+        using CM  = ThorsUtil::Pos;
 
     Clock                   clock;
     std::vector<Node>       nodes;
@@ -115,7 +116,7 @@ class Walker: public ThorsUI::Animateable
         template<typename F>
         float       findSmallestAngleFrom(F const& test, int point) const;
         Node const& findLowestNode()                                const;
-        float       calculateCenterOfGravity()                      const;
+        CM          calculateCenterOfGravity()                      const;
         Bound       getBaseOfObject(Node const& lowestNode)         const;
         Node const& dropToGround();
         float       rotateAroundLowestPoint(Node const& lowest, float maxTurn);
