@@ -15,7 +15,7 @@ PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walker
 
     for (auto& walker: walkers)
     {
-        buttons.emplace_back(walker, 1.0/10);
+        buttons.emplace_back(walker, 1.0 / 20);
         wxPanel* walkerPanel = new ThorsUI::PanelDrawable(this, buttons.back());
         walkerSizer->Add(walkerPanel, 1, 0, 0, nullptr);
     }
@@ -94,8 +94,8 @@ void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 {
     wxSize size = getSize();
     dc.SetLogicalScale(scale, scale);
-    dc.DrawRectangle(0, 0, 500, 500);
-    dc.SetLogicalOrigin(-size.x / scale /2, 0);
+    dc.DrawRectangle(0, 0, 1000, 1000);
+    dc.SetLogicalOrigin(-size.x / scale / 2, 0);
     walker.draw(dc);
 }
 
