@@ -93,8 +93,9 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(Walker& w, float scale)
 void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 {
     wxSize size = getSize();
-    dc.SetLogicalOrigin(size.x / 2, 0);
     dc.SetLogicalScale(scale, scale);
+    dc.DrawRectangle(0, 0, 500, 500);
+    dc.SetLogicalOrigin(-size.x / scale /2, 0);
     walker.draw(dc);
 }
 

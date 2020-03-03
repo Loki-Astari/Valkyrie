@@ -512,7 +512,7 @@ wxPoint toScreen(Pos const& p, int xOffset = 0, int yOffset = 0)
 {
     // Y cordinate is from bottom up (Y 0 is 20 pixels off the bottom)
     // X cordinate 0 is the middle of the screen.
-    return wxPoint{500 + xOffset + (p.first / 2), 500 - 20 - yOffset - (p.second / 2)};
+    return wxPoint{xOffset + (p.first / 2), 500 - 20 - yOffset - (p.second / 2)};
 }
 
 void Walker::drawAnimation(wxDC& dc, int /*step*/) const
