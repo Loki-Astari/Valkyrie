@@ -103,6 +103,8 @@ class Walker: public ThorsUI::Animateable
         virtual void    animationStepDo(wxDC& dc, int step)         override;
         virtual int     animationMaxStep()                  const   override;
     private:
+        void normalize();
+
         void reset();
         void setStartState();
 

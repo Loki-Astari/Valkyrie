@@ -195,6 +195,11 @@ Walker::Walker()
         muscles.emplace_back();
         connections[musIndex] = bestCon;
     }
+    normalize();
+}
+
+void Walker::normalize()
+{
     minimizeStress();
     dropAndFindRestingPoint();
     setStartState();
