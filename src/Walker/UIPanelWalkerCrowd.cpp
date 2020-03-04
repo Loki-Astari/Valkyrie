@@ -59,13 +59,13 @@ void PanelWalkerCrowd::shuffle()
         ThorsUtil::Pos      startP{start.x, start.y};
         ThorsUtil::Delta    delta{(end.x - start.x) * 1.0 / move, (end.y - start.y) * 1.0 / move};
 
-        addSprite([startP, delta, window](int step)
+        addSprite(move + 1, [startP, delta, window](int step)
         {
             wxPoint pos {startP.first, startP.second};
             pos.x += step * delta.first;
             pos.y += step * delta.second;
             window->Move(pos);
-        }, move + 1);
+        });
     }
 }
 
@@ -100,17 +100,17 @@ void PanelWalkerCrowd::evolve()
         switch(state)
         {
             case Live:
-                addSprite([&button = buttons[loop], flashBeg = 4 * loop](int step)
+                addSprite(buttons.size() * 4 + 12, [&button = buttons[loop], flashBeg = 4 * loop](int step)
                 {
                     if (static_cast<std::size_t>(step) == flashBeg)
                     {
                         button.flashBorder(3, *wxBLACK_PEN);
                     }
                     button.refresh();
-               }, buttons.size() * 4 + 12);
+               });
                break;
             case Die:
-                addSprite([&button = buttons[loop], &source = buttons[evolveParent++], flashBeg = 4 * loop](int step)
+                addSprite(buttons.size() * 4 + 12, [&button = buttons[loop], &source = buttons[evolveParent++], flashBeg = 4 * loop](int step)
                 {
                     if (static_cast<std::size_t>(step) == flashBeg)
                     {
@@ -124,10 +124,10 @@ void PanelWalkerCrowd::evolve()
                         button.spawn(source);
                     }
                     button.refresh();
-                }, buttons.size() * 4 + 12);
+                });
                 break;
             case Mutate:
-                addSprite([&button = buttons[loop], flashBeg = 4 * loop](int step)
+                addSprite(buttons.size() * 4 + 12, [&button = buttons[loop], flashBeg = 4 * loop](int step)
                 {
                     if (static_cast<std::size_t>(step) == flashBeg)
                     {
@@ -135,7 +135,7 @@ void PanelWalkerCrowd::evolve()
                         button.mutate();
                     }
                     button.refresh();
-               }, buttons.size() * 4 + 12);
+               });
                break;
         }
     }
