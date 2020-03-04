@@ -94,6 +94,16 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w
     , scale(scale)
 {}
 
+void PanelWalkerCrowd::WalkerButton::::kill()
+{
+    walker.kill();
+}
+
+void PanelWalkerCrowd::WalkerButton::refresh()
+{
+    parent.Refresh();
+}
+
 void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 {
     wxSize size = getSize();
