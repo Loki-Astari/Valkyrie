@@ -320,17 +320,23 @@ void Walker::minimizeStress(int maxRep)
     }
     if (broken)
     {
-        //std::cerr << "Bad Node dropping\n";
-        //std::cerr << (*this) << "\n";
-
-        // Clear out all the state.
-        nodes.clear();
-        muscles.clear();
-        connections.clear();
-
-        // Add one node so it will be drawn but can't move
-        nodes.emplace_back();
+        kill();
     }
+}
+
+void Walker::kill()
+{
+    //std::cerr << "Bad Node dropping\n";
+    //std::cerr << (*this) << "\n";
+
+    // Clear out all the state.
+    nodes.clear();
+    muscles.clear();
+    connections.clear();
+
+    // Add one node so it will be drawn but can't move
+    nodes.emplace_back();
+    normalize();
 }
 
 void Walker::dropAndFindRestingPoint()
