@@ -81,11 +81,14 @@ wxSize PanelWalkerCrowd::getSize() const
 
 void PanelWalkerCrowd::animateResetActionDone(wxDC& /*dc*/)
 {
-    background  = true;
-    std::stable_sort(std::begin(walkers), std::end(walkers), [](Walker const& lhs, Walker const& rhs){return lhs.score() > rhs.score();});
-    panelSizer->Layout();
-    panelSizer = nullptr;
-    Refresh();
+    if (panelSizer)
+    {
+        background  = true;
+        std::stable_sort(std::begin(walkers), std::end(walkers), [](Walker const& lhs, Walker const& rhs){return lhs.score() > rhs.score();});
+        panelSizer->Layout();
+        panelSizer = nullptr;
+        Refresh();
+    }
 }
 
 PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w, float scale)
