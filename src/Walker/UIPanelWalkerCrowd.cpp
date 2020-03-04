@@ -69,39 +69,75 @@ void PanelWalkerCrowd::shuffle()
     }
 }
 
+enum EvolveState {Live, Die, Mutate};
 void PanelWalkerCrowd::evolve()
 {
+    std::default_random_engine&     generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_real_distribution  random;
+
     wxSizer*    panelSizer  = GetSizer();
     std::size_t maxCount    = panelSizer->GetItemCount();
 
+    int evolveParent = 0;
     for (std::size_t loop = 0;loop < buttons.size(); ++loop)
     {
-        addSprite([&button = buttons[loop], flashBeg = 4 * loop, flashEnd = 4 * loop + 4, maxCount, loop](int step)
-        {
-            std::default_random_engine&     generator   = ThorsUtil::Random::getRandomGenerator();
-            std::uniform_real_distribution  random;
+        EvolveState     state = Live;
 
-            if (static_cast<std::size_t>(step) == flashBeg)
-            {
-                button.flashBackground(3, *wxYELLOW_BRUSH);
-                // We want to kill approx 60% of the walkers.
-                // The better scoring Walkers will have a higher chance of surviving.
-                // The worse scoring Walkers will have a lower chance of surviving.
-                if (random(generator) < (loop / 0.75 * maxCount))
+        // We want to kill approx 50% of the walkers.
+        // The better scoring Walkers will have a higher chance of surviving.
+        // The worse scoring Walkers will have a lower chance of surviving.
+        if (random(generator) < (loop * 1.0 / maxCount))
+        {
+            state = Die;
+        }
+        // Even if we don't die there is an additional 25% chance of
+        // of a random mutation.
+        else if (loop != 0 && random(generator) < 0.25)
+        {
+            state = Mutate;
+        }
+
+        switch(state)
+        {
+            case Live:
+                addSprite([&button = buttons[loop], flashBeg = 4 * loop](int step)
                 {
-                    button.kill();
-                }
-                // Even if we don't die there is an additional 25% chance of
-                // of a random mutation.
-                else if (random(generator) < 0.25)
+                    if (static_cast<std::size_t>(step) == flashBeg)
+                    {
+                        button.flashBorder(3);
+                    }
+                    button.refresh();
+               }, buttons.size() * 4 + 12);
+               break;
+            case Die:
+                addSprite([&button = buttons[loop], &source = buttons[evolveParent++], flashBeg = 4 * loop](int step)
                 {
-                }
-            }
-            if (static_cast<std::size_t>(step) == flashEnd)
-            {
-            }
-            button.refresh();
-        }, buttons.size() * 4 + 8);
+                    if (static_cast<std::size_t>(step) == flashBeg)
+                    {
+                        button.flashBackground(3, *wxYELLOW_BRUSH);
+                        button.kill();
+                    }
+                    if (static_cast<std::size_t>(step) == (flashBeg + 8))
+                    {
+                        button.flashBackground(3, *wxCYAN_BRUSH);
+                        source.flashBorder(2);
+                        button.spawn(source);
+                    }
+                    button.refresh();
+                }, buttons.size() * 4 + 12);
+                break;
+            case Mutate:
+                addSprite([&button = buttons[loop], flashBeg = 4 * loop](int step)
+                {
+                    if (static_cast<std::size_t>(step) == flashBeg)
+                    {
+                        button.flashBackground(3, *wxRED_BRUSH);
+                        button.mutate();
+                    }
+                    button.refresh();
+               }, buttons.size() * 4 + 12);
+               break;
+        }
     }
 }
 
@@ -155,8 +191,8 @@ void PanelWalkerCrowd::WalkerButton::refresh()
 void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 {
     wxSize size = getSize();
-    wxBrush const& defaultBrush = dc.GetBrush();
-    wxPen   const& defaultPen   = dc.GetPen();
+    wxBrush defaultBrush = dc.GetBrush();
+    wxPen   defaultPen   = dc.GetPen();
 
     dc.SetLogicalScale(scale, scale);
     if (parent.background)
@@ -174,8 +210,7 @@ void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 
         dc.SetBrush(wxNullBrush);
 
-        const wxPen& currentPen = dc.GetPen();
-        wxPen        widePen(currentPen);
+        wxPen        widePen(defaultPen);
         widePen.SetWidth(4 / scale);
         dc.SetPen(widePen);
 
@@ -188,8 +223,7 @@ void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 
     if (scale < 1.0/10)
     {
-        const wxPen& currentPen = dc.GetPen();
-        wxPen        widePen(currentPen);
+        wxPen        widePen(defaultPen);
         widePen.SetWidth(widePen.GetWidth() + 1);
         dc.SetPen(widePen);
     }
