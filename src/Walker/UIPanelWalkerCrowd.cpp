@@ -8,6 +8,7 @@ PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walker
     : PanelSpriteRunner(parent)
     , walkers(walkers)
     , panelSizer(nullptr)
+    , background(true)
 {
     buttons.reserve(walkers.size());
 
@@ -15,7 +16,7 @@ PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walker
 
     for (auto& walker: walkers)
     {
-        buttons.emplace_back(walker, 1.0 / 20);
+        buttons.emplace_back(*this, walker, 1.0 / 20);
         wxPanel* walkerPanel = new ThorsUI::PanelDrawable(this, buttons.back());
         walkerSizer->Add(walkerPanel, 1, 0, 0, nullptr);
     }
@@ -28,7 +29,8 @@ void PanelWalkerCrowd::shuffle()
     {
         return;
     }
-    panelSizer = GetSizer();
+    background  = false;
+    panelSizer  = GetSizer();
 
     std::vector<int>    newOrder;
     for (std::size_t loop = 0; loop < walkers.size(); ++ loop)
@@ -79,14 +81,16 @@ wxSize PanelWalkerCrowd::getSize() const
 
 void PanelWalkerCrowd::animateResetActionDone(wxDC& /*dc*/)
 {
+    background  = true;
     std::stable_sort(std::begin(walkers), std::end(walkers), [](Walker const& lhs, Walker const& rhs){return lhs.score() > rhs.score();});
     panelSizer->Layout();
     panelSizer = nullptr;
     Refresh();
 }
 
-PanelWalkerCrowd::WalkerButton::WalkerButton(Walker& w, float scale)
-    : walker(w)
+PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w, float scale)
+    : parent(parent)
+    , walker(w)
     , scale(scale)
 {}
 
@@ -94,8 +98,18 @@ void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 {
     wxSize size = getSize();
     dc.SetLogicalScale(scale, scale);
-    dc.DrawRectangle(0, 0, 1000, 1000);
+    if (parent.background)
+    {
+        dc.DrawRectangle(0, 0, 1000, 1000);
+    }
     dc.SetLogicalOrigin(-size.x / scale / 2, 0);
+
+    const wxPen& currentPen = dc.GetPen();
+    wxPen        widePen(currentPen);
+
+    widePen.SetWidth(widePen.GetWidth() + 1);
+    dc.SetPen(widePen);
+
     walker.draw(dc);
 }
 

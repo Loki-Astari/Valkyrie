@@ -16,10 +16,11 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
 {
     class WalkerButton: public ThorsAnvil::ThorsUI::Drawable
     {
-        Walker&     walker;
-        float       scale;
+        PanelWalkerCrowd&   parent;
+        Walker&             walker;
+        float               scale;
         public:
-            WalkerButton(Walker& w, float scale);
+            WalkerButton(PanelWalkerCrowd& parent, Walker& w, float scale);
             virtual void    draw(wxDC& dc)  const override;
             virtual wxSize  getSize()       const override;
     };
@@ -27,6 +28,7 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
     std::vector<Walker>&            walkers;
     std::vector<WalkerButton>       buttons;
     wxSizer*                        panelSizer;
+    bool                            background;
 
     public:
         PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walkers);
