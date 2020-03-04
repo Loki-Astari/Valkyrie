@@ -132,9 +132,19 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w
     , flashBackground(false)
 {}
 
-void PanelWalkerCrowd::WalkerButton::::kill()
+void PanelWalkerCrowd::WalkerButton::kill()
 {
     walker.kill();
+}
+
+void PanelWalkerCrowd::WalkerButton::mutate()
+{
+    walker.mutate();
+}
+
+void PanelWalkerCrowd::WalkerButton::spawn(WalkerButton const& parent)
+{
+    walker.spawn(parent.walker);
 }
 
 void PanelWalkerCrowd::WalkerButton::refresh()
