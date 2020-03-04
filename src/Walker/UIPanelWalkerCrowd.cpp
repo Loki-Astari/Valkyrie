@@ -104,7 +104,7 @@ void PanelWalkerCrowd::evolve()
                 {
                     if (static_cast<std::size_t>(step) == flashBeg)
                     {
-                        button.flashBorder(3);
+                        button.flashBorder(3, *wxBLACK_PEN);
                     }
                     button.refresh();
                }, buttons.size() * 4 + 12);
@@ -120,7 +120,7 @@ void PanelWalkerCrowd::evolve()
                     if (static_cast<std::size_t>(step) == (flashBeg + 8))
                     {
                         button.flashBackground(3, *wxCYAN_BRUSH);
-                        source.flashBorder(2);
+                        source.flashBorder(2, *wxCYAN_PEN);
                         button.spawn(source);
                     }
                     button.refresh();
@@ -164,8 +164,9 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w
     , walker(w)
     , scale(scale)
     , flashBorderTime(0)
+    , flashBorderPen(*wxBLACK_PEN)
     , flashBackgroundTime(0)
-    , flashBackgroundBrush(nullptr)
+    , flashBackgroundBrush(*wxWHITE_BRUSH)
 {}
 
 void PanelWalkerCrowd::WalkerButton::kill()
@@ -200,7 +201,7 @@ void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
         if (flashBackgroundTime > 0)
         {
             --flashBackgroundTime;
-            dc.SetBrush(flashBackgroundBrush ? *flashBackgroundBrush : *wxYELLOW_BRUSH);
+            dc.SetBrush(flashBackgroundBrush);
         }
         dc.DrawRectangle(0, 0, 1000, 1000);
     }
@@ -210,7 +211,7 @@ void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 
         dc.SetBrush(wxNullBrush);
 
-        wxPen        widePen(defaultPen);
+        wxPen        widePen(flashBorderPen);
         widePen.SetWidth(4 / scale);
         dc.SetPen(widePen);
 
@@ -239,13 +240,14 @@ wxSize PanelWalkerCrowd::WalkerButton::getSize() const
     return result;
 }
 
-void PanelWalkerCrowd::WalkerButton::flashBorder(int time)
+void PanelWalkerCrowd::WalkerButton::flashBorder(int time, wxPen const& pen)
 {
     flashBorderTime         = time;
+    flashBorderPen          = pen;
 }
 
 void PanelWalkerCrowd::WalkerButton::flashBackground(int time, wxBrush const& brush)
 {
     flashBackgroundTime     = time;
-    flashBackgroundBrush    = &brush;
+    flashBackgroundBrush    = brush;
 }

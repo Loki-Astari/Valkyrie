@@ -20,8 +20,9 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
         Walker&                 walker;
         float                   scale;
         mutable int             flashBorderTime;
+        mutable wxPen           flashBorderPen;
         mutable int             flashBackgroundTime;
-        mutable wxBrush const*  flashBackgroundBrush;
+        mutable wxBrush         flashBackgroundBrush;
 
         public:
             WalkerButton(PanelWalkerCrowd& parent, Walker& w, float scale);
@@ -33,7 +34,7 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
             void spawn(WalkerButton const& parent);
 
             void refresh();
-            void flashBorder(int time);
+            void flashBorder(int time, wxPen const& pen);
             void flashBackground(int time, wxBrush const& brush);
     };
 
