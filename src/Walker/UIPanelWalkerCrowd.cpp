@@ -71,6 +71,40 @@ void PanelWalkerCrowd::shuffle()
 
 void PanelWalkerCrowd::evolve()
 {
+    wxSizer*    panelSizer  = GetSizer();
+    std::size_t maxCount    = panelSizer->GetItemCount();
+
+    for (std::size_t loop = 0;loop < buttons.size(); ++loop)
+    {
+        addSprite([&button = buttons[loop], flashBeg = 4 * loop, flashEnd = 4 * loop + 4, maxCount, loop](int step)
+        {
+            std::default_random_engine&     generator   = ThorsUtil::Random::getRandomGenerator();
+            std::uniform_real_distribution  random;
+
+            if (static_cast<std::size_t>(step) == flashBeg)
+            {
+                button.flash(true);
+                // We want to kill approx 60% of the walkers.
+                // The better scoring Walkers will have a higher chance of surviving.
+                // The worse scoring Walkers will have a lower chance of surviving.
+                if (random(generator) < (loop / 0.75 * maxCount))
+                {
+                    button.kill();
+                }
+                // Even if we don't die there is an additional 25% chance of
+                // of a random mutation.
+                else if (random(generator) < 0.25)
+                {
+                }
+                button.refresh();
+            }
+            if (static_cast<std::size_t>(step) == flashEnd)
+            {
+                button.flash(false);
+                button.refresh();
+            }
+        }, buttons.size() * 4 + 8);
+    }
 }
 
 wxSize PanelWalkerCrowd::getSize() const
