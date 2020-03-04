@@ -96,6 +96,8 @@ class Walker: public ThorsUI::Animateable
         int  score() const {return currentScore;}
         int  tick();
         void kill();
+        void mutate();
+        void spawn(Walker const& parent);
 
         virtual wxSize  getSize()                           const   override;
         virtual void    drawAnimation(wxDC& dc, int step)   const   override;

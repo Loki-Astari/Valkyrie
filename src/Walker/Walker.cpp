@@ -326,9 +326,6 @@ void Walker::minimizeStress(int maxRep)
 
 void Walker::kill()
 {
-    //std::cerr << "Bad Node dropping\n";
-    //std::cerr << (*this) << "\n";
-
     // Clear out all the state.
     nodes.clear();
     muscles.clear();
@@ -336,6 +333,22 @@ void Walker::kill()
 
     // Add one node so it will be drawn but can't move
     nodes.emplace_back();
+    normalize();
+}
+
+void Walker::mutate()
+{
+    // TODO
+}
+
+void Walker::spawn(Walker const& parent)
+{
+    nodes       = parent.nodes;
+    muscles     = parent.muscles;
+    connections = parent.connections;
+
+    mutate();
+
     normalize();
 }
 
