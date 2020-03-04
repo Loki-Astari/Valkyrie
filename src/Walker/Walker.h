@@ -106,7 +106,7 @@ class Walker: public ThorsUI::Animateable
         void reset();
         void setStartState();
 
-        void normalize(int maxRep = 100);
+        void minimizeStress(int maxRep = 100);
         float applyGravity();
         void dropAndFindRestingPoint();
 

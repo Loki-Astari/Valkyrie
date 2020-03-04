@@ -195,7 +195,7 @@ Walker::Walker()
         muscles.emplace_back();
         connections[musIndex] = bestCon;
     }
-    normalize();
+    minimizeStress();
     dropAndFindRestingPoint();
     setStartState();
 }
@@ -218,7 +218,7 @@ int Walker::tick()
     {
         m.tick(nextTick);
     }
-    normalize();
+    minimizeStress();
     return applyGravity();
 }
 
@@ -247,7 +247,7 @@ void Walker::setStartState()
     }
 }
 
-void Walker::normalize(int maxRep)
+void Walker::minimizeStress(int maxRep)
 {
     // Try and minimize the stress on each muscle.
     // This is done by reducing the current size of the muscle (which is the distance between
@@ -597,7 +597,7 @@ void Walker::load(std::istream& stream)
         swap(connections,tmpConection);
 
         clock.reset();
-        normalize();
+        minimizeStress();
         dropAndFindRestingPoint();
     }
 }
