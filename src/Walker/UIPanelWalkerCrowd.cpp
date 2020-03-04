@@ -83,7 +83,7 @@ void PanelWalkerCrowd::evolve()
 
             if (static_cast<std::size_t>(step) == flashBeg)
             {
-                button.flash(true);
+                button.flashBackground(3, *wxYELLOW_BRUSH);
                 // We want to kill approx 60% of the walkers.
                 // The better scoring Walkers will have a higher chance of surviving.
                 // The worse scoring Walkers will have a lower chance of surviving.
@@ -96,13 +96,11 @@ void PanelWalkerCrowd::evolve()
                 else if (random(generator) < 0.25)
                 {
                 }
-                button.refresh();
             }
             if (static_cast<std::size_t>(step) == flashEnd)
             {
-                button.flash(false);
-                button.refresh();
             }
+            button.refresh();
         }, buttons.size() * 4 + 8);
     }
 }
@@ -129,7 +127,9 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w
     : parent(parent)
     , walker(w)
     , scale(scale)
-    , flashBackground(false)
+    , flashBorderTime(0)
+    , flashBackgroundTime(0)
+    , flashBackgroundBrush(nullptr)
 {}
 
 void PanelWalkerCrowd::WalkerButton::kill()
@@ -155,22 +155,44 @@ void PanelWalkerCrowd::WalkerButton::refresh()
 void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 {
     wxSize size = getSize();
+    wxBrush const& defaultBrush = dc.GetBrush();
+    wxPen   const& defaultPen   = dc.GetPen();
+
     dc.SetLogicalScale(scale, scale);
     if (parent.background)
     {
-        if (flashBackground)
+        if (flashBackgroundTime > 0)
         {
-            dc.SetBrush(*wxYELLOW_BRUSH);
+            --flashBackgroundTime;
+            dc.SetBrush(flashBackgroundBrush ? *flashBackgroundBrush : *wxYELLOW_BRUSH);
         }
         dc.DrawRectangle(0, 0, 1000, 1000);
     }
+    if (flashBorderTime > 0)
+    {
+        --flashBorderTime;
+
+        dc.SetBrush(wxNullBrush);
+
+        const wxPen& currentPen = dc.GetPen();
+        wxPen        widePen(currentPen);
+        widePen.SetWidth(4 / scale);
+        dc.SetPen(widePen);
+
+        dc.DrawRectangle(0, 0, 1000, 1000);
+    }
+    dc.SetBrush(defaultBrush);
+    dc.SetPen(defaultPen);
+
     dc.SetLogicalOrigin(-size.x / scale / 2, 0);
 
-    const wxPen& currentPen = dc.GetPen();
-    wxPen        widePen(currentPen);
-
-    widePen.SetWidth(widePen.GetWidth() + 1);
-    dc.SetPen(widePen);
+    if (scale < 1.0/10)
+    {
+        const wxPen& currentPen = dc.GetPen();
+        wxPen        widePen(currentPen);
+        widePen.SetWidth(widePen.GetWidth() + 1);
+        dc.SetPen(widePen);
+    }
 
     walker.draw(dc);
 }
@@ -183,7 +205,13 @@ wxSize PanelWalkerCrowd::WalkerButton::getSize() const
     return result;
 }
 
-void PanelWalkerCrowd::WalkerButton::flash(bool b)
+void PanelWalkerCrowd::WalkerButton::flashBorder(int time)
 {
-    flashBackground = b;
+    flashBorderTime         = time;
+}
+
+void PanelWalkerCrowd::WalkerButton::flashBackground(int time, wxBrush const& brush)
+{
+    flashBackgroundTime     = time;
+    flashBackgroundBrush    = &brush;
 }
