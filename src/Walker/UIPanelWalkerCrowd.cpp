@@ -59,13 +59,13 @@ void PanelWalkerCrowd::shuffle()
         ThorsUtil::Pos      startP{start.x, start.y};
         ThorsUtil::Delta    delta{(end.x - start.x) * 1.0 / move, (end.y - start.y) * 1.0 / move};
 
-        addSprite([window](ThorsUtil::Pos const& start, ThorsUtil::Delta const& delta, int step)
+        addSprite([startP, delta, window](int step)
         {
-            wxPoint pos {start.first, start.second};
+            wxPoint pos {startP.first, startP.second};
             pos.x += step * delta.first;
             pos.y += step * delta.second;
             window->Move(pos);
-        }, startP, delta, move + 1);
+        }, move + 1);
     }
 }
 
