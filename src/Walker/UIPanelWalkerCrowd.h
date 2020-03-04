@@ -19,6 +19,7 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
         PanelWalkerCrowd&   parent;
         Walker&             walker;
         float               scale;
+        bool                flashBackground;
         public:
             WalkerButton(PanelWalkerCrowd& parent, Walker& w, float scale);
             virtual void    draw(wxDC& dc)  const override;
@@ -26,6 +27,7 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
 
             void kill();
             void refresh();
+            void flash(bool b);
     };
 
     std::vector<Walker>&            walkers;

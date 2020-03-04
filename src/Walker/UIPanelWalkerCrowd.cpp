@@ -92,6 +92,7 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w
     : parent(parent)
     , walker(w)
     , scale(scale)
+    , flashBackground(false)
 {}
 
 void PanelWalkerCrowd::WalkerButton::::kill()
@@ -110,6 +111,10 @@ void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
     dc.SetLogicalScale(scale, scale);
     if (parent.background)
     {
+        if (flashBackground)
+        {
+            dc.SetBrush(*wxYELLOW_BRUSH);
+        }
         dc.DrawRectangle(0, 0, 1000, 1000);
     }
     dc.SetLogicalOrigin(-size.x / scale / 2, 0);
@@ -129,4 +134,9 @@ wxSize PanelWalkerCrowd::WalkerButton::getSize() const
     result.x *= scale;
     result.y *= scale;
     return result;
+}
+
+void PanelWalkerCrowd::WalkerButton::flash(bool b)
+{
+    flashBackground = b;
 }
