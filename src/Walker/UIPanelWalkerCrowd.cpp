@@ -114,13 +114,13 @@ void PanelWalkerCrowd::evolve()
                 {
                     if (static_cast<std::size_t>(step) == flashBeg)
                     {
-                        button.flashBackground(3, *wxYELLOW_BRUSH);
+                        button.flashBackground(8, *wxYELLOW_BRUSH);
                         button.kill();
                     }
                     if (static_cast<std::size_t>(step) == (flashBeg + 8))
                     {
                         button.flashBackground(3, *wxCYAN_BRUSH);
-                        source.flashBorder(2, *wxCYAN_PEN);
+                        source.flashBorder(3, *wxCYAN_PEN);
                         button.spawn(source);
                     }
                     button.refresh();
