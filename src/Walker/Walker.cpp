@@ -190,6 +190,7 @@ Walker::Walker()
 
 void Walker::normalize()
 {
+    reset();
     minimizeStress();
     dropAndFindRestingPoint();
 }
@@ -202,7 +203,6 @@ void Walker::run()
         score = tick();
     }
     currentScore = score;
-    reset();
     normalize();
 }
 
@@ -317,6 +317,7 @@ void Walker::kill()
 void Walker::mutate()
 {
     // TODO
+    normalize();
 }
 
 void Walker::spawn(Walker const& parent)
@@ -598,7 +599,6 @@ void Walker::load(std::istream& stream)
         swap(muscles,    tmpMuscle);
         swap(connections,tmpConection);
 
-        reset();
         normalize();
     }
 }
