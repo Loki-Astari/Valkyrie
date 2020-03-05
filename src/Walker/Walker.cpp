@@ -27,6 +27,7 @@ Node::Node()
     std::uniform_int_distribution<int>      massDist(1, 10);
 
     position    = {positionDist(generator), positionDist(generator)};
+    startState  = position;
     mass        = massDist(generator);
 }
 
@@ -56,15 +57,9 @@ void Node::reset()
     position = startState;
 }
 
-void Node::setStartState()
-{
-    startState = position;
-}
-
 void Node::load(std::istream& stream)
 {
     stream >> startState.first >> startState.second >> mass;
-    reset();
 }
 
 void Node::save(std::ostream& stream) const
@@ -86,6 +81,7 @@ Muscle::Muscle()
     contractTime    = timerDist(generator) * 10;
 
     currentSize = contractLen;
+    startState  = currentSize;
 }
 
 void Muscle::tick(int tick)
@@ -110,11 +106,6 @@ void Muscle::reset()
     currentTick = 0;
 }
 
-void Muscle::setStartState()
-{
-    startState = currentSize;
-}
-
 float Muscle::getLen() const
 {
     return currentSize;
@@ -123,7 +114,6 @@ float Muscle::getLen() const
 void Muscle::load(std::istream& stream)
 {
     stream >> startState >> extendedLen >> contractLen >> strength >> extendedTime >> contractTime;
-    reset();
 }
 
 void Muscle::save(std::ostream& stream) const
@@ -202,7 +192,6 @@ void Walker::normalize()
 {
     minimizeStress();
     dropAndFindRestingPoint();
-    setStartState();
 }
 
 void Walker::run()
@@ -214,6 +203,7 @@ void Walker::run()
     }
     currentScore = score;
     reset();
+    normalize();
 }
 
 int Walker::tick()
@@ -237,18 +227,6 @@ void Walker::reset()
     for (auto& muscle: muscles)
     {
         muscle.reset();
-    }
-}
-
-void Walker::setStartState()
-{
-    for (auto& node: nodes)
-    {
-        node.setStartState();
-    }
-    for (auto& muscle: muscles)
-    {
-        muscle.setStartState();
     }
 }
 
@@ -620,9 +598,8 @@ void Walker::load(std::istream& stream)
         swap(muscles,    tmpMuscle);
         swap(connections,tmpConection);
 
-        clock.reset();
-        minimizeStress();
-        dropAndFindRestingPoint();
+        reset();
+        normalize();
     }
 }
 

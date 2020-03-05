@@ -40,7 +40,6 @@ class Node
         void setPos(Pos const& p);
 
         void reset();
-        void setStartState();
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -68,7 +67,6 @@ class Muscle
         void tick(int tick);
 
         void reset();
-        void setStartState();
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -109,7 +107,6 @@ class Walker: public ThorsUI::Animateable
         void normalize();
 
         void reset();
-        void setStartState();
 
         void minimizeStress(int maxRep = 100);
         float applyGravity();
