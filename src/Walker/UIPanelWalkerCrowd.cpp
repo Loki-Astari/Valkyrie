@@ -97,7 +97,7 @@ void PanelWalkerCrowd::evolve()
             state = Mutate;
         }
 
-        switch(state)
+        switch (state)
         {
             case Live:
                 addSprite(buttons.size() * 4 + 12, [&button = buttons[loop], flashBeg = 4 * loop](int step)
@@ -107,8 +107,8 @@ void PanelWalkerCrowd::evolve()
                         button.flashBorder(3, *wxBLACK_PEN);
                     }
                     button.refresh();
-               });
-               break;
+                });
+                break;
             case Die:
                 addSprite(buttons.size() * 4 + 12, [&button = buttons[loop], &source = buttons[evolveParent++], flashBeg = 4 * loop](int step)
                 {
@@ -135,8 +135,8 @@ void PanelWalkerCrowd::evolve()
                         button.mutate();
                     }
                     button.refresh();
-               });
-               break;
+                });
+                break;
         }
     }
 }
