@@ -1,5 +1,6 @@
 #include "ValkyrieWalker.h"
 #include "WalkerFrame.h"
+#include "GraphFrame.h"
 #include "Walker.h"
 #include "ThorsUtil/Random.h"
 #include <wx/filename.h>
@@ -70,8 +71,10 @@ bool ValkyrieWalkerApp::OnInit()
         walkers.emplace_back();
     }
 
-    WalkerFrame* frame = new WalkerFrame(walkers);
+    GraphFrame*     graphFrame  = new GraphFrame(walkers);
+    WalkerFrame*    walkerFrame = new WalkerFrame(walkers);
 
-    frame->Show(true);
+    walkerFrame->Show(true);
+    graphFrame->Show(true);
     return true;
 }

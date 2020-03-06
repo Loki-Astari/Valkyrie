@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(WalkerFrame, wxFrame)
 END_EVENT_TABLE()
 
 WalkerFrame::WalkerFrame(std::vector<Walker>& walk)
-    : wxFrame(nullptr, BUTTON_SAVE_ID, wxT("Valkyrie"))
+    : wxFrame(nullptr, wxID_ANY , wxT("Valkyrie"))
     , walkers(walk)
     , panelWalker(nullptr)
 {
