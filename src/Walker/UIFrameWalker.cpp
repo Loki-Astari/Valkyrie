@@ -1,20 +1,20 @@
-#include "WalkerFrame.h"
+#include "UIFrameWalker.h"
 #include "Walker.h"
 #include <wx/progdlg.h>
 #include <fstream>
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
-BEGIN_EVENT_TABLE(WalkerFrame, wxFrame)
-    EVT_MENU(wxID_ABOUT,        WalkerFrame::onAbout)
-    EVT_MENU(wxID_EXIT,         WalkerFrame::onQuit)
-    EVT_BUTTON(BUTTON_SAVE_ID,  WalkerFrame::onSave)
-    EVT_BUTTON(BUTTON_RUN1_ID,  WalkerFrame::onRun1)
-    EVT_BUTTON(BUTTON_SORT_ID,  WalkerFrame::onSort)
-    EVT_BUTTON(BUTTON_EVOLVE_ID,WalkerFrame::onEvolve)
+BEGIN_EVENT_TABLE(FrameWalker, wxFrame)
+    EVT_MENU(wxID_ABOUT,        FrameWalker::onAbout)
+    EVT_MENU(wxID_EXIT,         FrameWalker::onQuit)
+    EVT_BUTTON(BUTTON_SAVE_ID,  FrameWalker::onSave)
+    EVT_BUTTON(BUTTON_RUN1_ID,  FrameWalker::onRun1)
+    EVT_BUTTON(BUTTON_SORT_ID,  FrameWalker::onSort)
+    EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalker::onEvolve)
 END_EVENT_TABLE()
 
-WalkerFrame::WalkerFrame(std::vector<Walker>& walk)
+FrameWalker::FrameWalker(std::vector<Walker>& walk)
     : wxFrame(nullptr, wxID_ANY , wxT("Valkyrie"))
     , walkers(walk)
     , panelWalker(nullptr)
@@ -62,19 +62,19 @@ WalkerFrame::WalkerFrame(std::vector<Walker>& walk)
 }
 
 
-void WalkerFrame::onAbout(wxCommandEvent& /*event*/)
+void FrameWalker::onAbout(wxCommandEvent& /*event*/)
 {
     wxString        msg;
     msg.Printf(wxT("Hello and Welcome to %s"), wxVERSION_STRING);
     wxMessageBox(msg, wxT("About Minimal"), wxOK | wxICON_INFORMATION, this);
 }
 
-void WalkerFrame::onQuit(wxCommandEvent& /*event*/)
+void FrameWalker::onQuit(wxCommandEvent& /*event*/)
 {
     Close();
 }
 
-void WalkerFrame::onSave(wxCommandEvent& /*event*/)
+void FrameWalker::onSave(wxCommandEvent& /*event*/)
 {
     std::ofstream   save("save.walker");
     for (auto const& walker: walkers)
@@ -83,7 +83,7 @@ void WalkerFrame::onSave(wxCommandEvent& /*event*/)
     }
 }
 
-void WalkerFrame::onRun1(wxCommandEvent& /*event*/)
+void FrameWalker::onRun1(wxCommandEvent& /*event*/)
 {
     int count = walkers.size();
     int div   = count / 100;
@@ -102,12 +102,12 @@ void WalkerFrame::onRun1(wxCommandEvent& /*event*/)
     }
 }
 
-void WalkerFrame::onSort(wxCommandEvent& /*event*/)
+void FrameWalker::onSort(wxCommandEvent& /*event*/)
 {
     panelWalker->shuffle();
 }
 
-void WalkerFrame::onEvolve(wxCommandEvent& /*event*/)
+void FrameWalker::onEvolve(wxCommandEvent& /*event*/)
 {
     panelWalker->evolve();
 }

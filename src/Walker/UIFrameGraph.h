@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_GRAPH_FRAME_H
-#define THORSANVIL_GRAPH_FRAME_H
+#ifndef THORSANVIL_VALKYRIE_WALKER_GRAPH_FRAME_H
+#define THORSANVIL_VALKYRIE_WALKER_GRAPH_FRAME_H
 
 #include "ValkyrieWalkerConfig.h"
 #include <wx/wx.h>
@@ -11,12 +11,12 @@ namespace ThorsAnvil
     {
 
 class Walker;
-class GraphFrame: public wxFrame
+class FrameGraph: public wxFrame
 {
     std::vector<Walker>&        walkers;
 
     public:
-        GraphFrame(std::vector<Walker>& walkers);
+        FrameGraph(std::vector<Walker>& walkers);
 
     private:
 

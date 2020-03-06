@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_WALKER_FRAME_H
-#define THORSANVIL_WALKER_FRAME_H
+#ifndef THORSANVIL_VALKYRIE_WALKER_FRAME_WALKER_H
+#define THORSANVIL_VALKYRIE_WALKER_FRAME_WALKER_H
 
 #include "ValkyrieWalkerConfig.h"
 #include "UIPanelWalkerCrowd.h"
@@ -12,7 +12,7 @@ namespace ThorsAnvil
     {
 
 class Walker;
-class WalkerFrame: public wxFrame
+class FrameWalker: public wxFrame
 {
     static constexpr int BUTTON_SAVE_ID       = wxID_HIGHEST + 1;
     static constexpr int BUTTON_RUN1_ID       = wxID_HIGHEST + 2;
@@ -23,7 +23,7 @@ class WalkerFrame: public wxFrame
     PanelWalkerCrowd*           panelWalker;
 
     public:
-        WalkerFrame(std::vector<Walker>& walkers);
+        FrameWalker(std::vector<Walker>& walkers);
 
     private:
         void onQuit(wxCommandEvent& event);

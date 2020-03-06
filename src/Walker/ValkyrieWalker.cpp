@@ -1,6 +1,6 @@
 #include "ValkyrieWalker.h"
-#include "WalkerFrame.h"
-#include "GraphFrame.h"
+#include "UIFrameWalker.h"
+#include "UIFrameGraph.h"
 #include "Walker.h"
 #include "ThorsUtil/Random.h"
 #include <wx/filename.h>
@@ -71,8 +71,8 @@ bool ValkyrieWalkerApp::OnInit()
         walkers.emplace_back();
     }
 
-    GraphFrame*     graphFrame  = new GraphFrame(walkers);
-    WalkerFrame*    walkerFrame = new WalkerFrame(walkers);
+    FrameGraph*     graphFrame  = new FrameGraph(walkers);
+    FrameWalker*    walkerFrame = new FrameWalker(walkers);
 
     walkerFrame->Show(true);
     graphFrame->Show(true);
