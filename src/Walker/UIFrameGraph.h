@@ -2,6 +2,8 @@
 #define THORSANVIL_VALKYRIE_WALKER_GRAPH_FRAME_H
 
 #include "ValkyrieWalkerConfig.h"
+#include "DrawableDistanceGraph.h"
+#include "DrawableSpeciesGraph.h"
 #include <wx/wx.h>
 
 
@@ -14,6 +16,8 @@ class Walker;
 class FrameGraph: public wxFrame
 {
     std::vector<Walker>&        walkers;
+    DrawableDistanceGraph       distanceGraph;
+    DrawableSpeciesGraph        speciesGraph;
 
     public:
         FrameGraph(std::vector<Walker>& walkers);
