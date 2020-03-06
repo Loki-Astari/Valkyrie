@@ -12,6 +12,7 @@ namespace ThorsAnvil
     {
 
 class Walker;
+class FrameGraph;
 class FrameWalker: public wxFrame
 {
     static constexpr int BUTTON_SAVE_ID       = wxID_HIGHEST + 1;
@@ -21,9 +22,10 @@ class FrameWalker: public wxFrame
 
     std::vector<Walker>&        walkers;
     PanelWalkerCrowd*           panelWalker;
+    FrameGraph*                 frameGraph;
 
     public:
-        FrameWalker(std::vector<Walker>& walkers);
+        FrameWalker(std::vector<Walker>& walkers, FrameGraph* frameGraph);
 
     private:
         void onQuit(wxCommandEvent& event);

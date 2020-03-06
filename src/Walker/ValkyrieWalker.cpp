@@ -72,7 +72,7 @@ bool ValkyrieWalkerApp::OnInit()
     }
 
     FrameGraph*     graphFrame  = new FrameGraph(walkers);
-    FrameWalker*    walkerFrame = new FrameWalker(walkers);
+    FrameWalker*    walkerFrame = new FrameWalker(walkers, graphFrame);
 
     walkerFrame->Show(true);
     graphFrame->Show(true);

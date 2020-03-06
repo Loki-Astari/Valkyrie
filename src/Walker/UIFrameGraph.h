@@ -21,6 +21,7 @@ class FrameGraph: public wxFrame
 
     public:
         FrameGraph(std::vector<Walker>& walkers);
+        void tick();
 
     private:
 

@@ -1,4 +1,5 @@
 #include "UIFrameWalker.h"
+#include "UIFrameGraph.h"
 #include "Walker.h"
 #include <wx/progdlg.h>
 #include <fstream>
@@ -14,10 +15,11 @@ BEGIN_EVENT_TABLE(FrameWalker, wxFrame)
     EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalker::onEvolve)
 END_EVENT_TABLE()
 
-FrameWalker::FrameWalker(std::vector<Walker>& walk)
+FrameWalker::FrameWalker(std::vector<Walker>& walk, FrameGraph* frameGraph)
     : wxFrame(nullptr, wxID_ANY , wxT("Valkyrie"))
     , walkers(walk)
     , panelWalker(nullptr)
+    , frameGraph(frameGraph)
 {
 
     wxPanel*  panelButton= new wxPanel(this);
@@ -100,6 +102,7 @@ void FrameWalker::onRun1(wxCommandEvent& /*event*/)
         }
         ++count;
     }
+    frameGraph->tick();
 }
 
 void FrameWalker::onSort(wxCommandEvent& /*event*/)

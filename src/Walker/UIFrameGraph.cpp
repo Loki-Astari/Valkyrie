@@ -22,3 +22,9 @@ FrameGraph::FrameGraph(std::vector<Walker>& walk)
 
     SetSizerAndFit(sizer);
 }
+
+void FrameGraph::tick()
+{
+    distanceGraph.tick();
+    speciesGraph.tick();
+}

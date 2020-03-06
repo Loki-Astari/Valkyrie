@@ -17,3 +17,7 @@ wxSize DrawableSpeciesGraph::getSize() const
 {
     return wxSize(400, 400);
 }
+
+void DrawableSpeciesGraph::tick()
+{
+}

@@ -17,3 +17,7 @@ wxSize DrawableDistanceGraph::getSize() const
 {
     return wxSize(200, 200);
 }
+
+void DrawableDistanceGraph::tick()
+{
+}
