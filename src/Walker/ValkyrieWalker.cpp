@@ -76,6 +76,9 @@ bool ValkyrieWalkerApp::OnInit()
         walkers.emplace_back();
     }
 
+    distanceGraph.tick();
+    speciesGraph.tick();
+
     FrameGraph*     graphFrame  = new FrameGraph(distanceGraph, speciesGraph);
     FrameWalker*    walkerFrame = new FrameWalker(walkers, distanceGraph, speciesGraph);
 
