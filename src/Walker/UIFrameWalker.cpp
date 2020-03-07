@@ -3,6 +3,7 @@
 #include "Walker.h"
 #include "DrawableDistanceGraph.h"
 #include "DrawableSpeciesGraph.h"
+#include "DrawableDistanceHotMap.h"
 #include <wx/progdlg.h>
 #include <fstream>
 
@@ -18,11 +19,12 @@ BEGIN_EVENT_TABLE(FrameWalker, wxFrame)
     EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalker::onEvolve)
 END_EVENT_TABLE()
 
-FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph)
+FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap)
     : wxFrame(nullptr, wxID_ANY , wxT("Valkyrie"))
     , walkers(walk)
     , distanceGraph(distanceGraph)
     , speciesGraph(speciesGraph)
+    , distanceHotMap(distanceHotMap)
     , panelWalker(nullptr)
 {
 
@@ -124,4 +126,5 @@ void FrameWalker::onUpdate(wxCommandEvent& /*event*/)
 {
     distanceGraph.tick();
     speciesGraph.tick();
+    distanceHotMap.tick();
 }

@@ -25,6 +25,7 @@ const wxCmdLineEntryDesc ValkyrieWalkerApp::cmdLineDesc[] =
 ValkyrieWalkerApp::ValkyrieWalkerApp()
     : distanceGraph(walkers)
     , speciesGraph(walkers)
+    , distanceHotMap(walkers)
 {}
 
 bool ValkyrieWalkerApp::parseCommandLine()
@@ -79,8 +80,8 @@ bool ValkyrieWalkerApp::OnInit()
     distanceGraph.tick();
     speciesGraph.tick();
 
-    FrameGraph*     graphFrame  = new FrameGraph(distanceGraph, speciesGraph);
-    FrameWalker*    walkerFrame = new FrameWalker(walkers, distanceGraph, speciesGraph);
+    FrameGraph*     graphFrame  = new FrameGraph(distanceGraph, speciesGraph, distanceHotMap);
+    FrameWalker*    walkerFrame = new FrameWalker(walkers, distanceGraph, speciesGraph, distanceHotMap);
 
     walkerFrame->Show(true);
     graphFrame->Show(true);

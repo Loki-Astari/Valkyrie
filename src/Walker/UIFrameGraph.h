@@ -12,10 +12,11 @@ namespace ThorsAnvil
 
 class DrawableDistanceGraph;
 class DrawableSpeciesGraph;
+class DrawableDistanceHotMap;
 class FrameGraph: public wxFrame
 {
     public:
-        FrameGraph(DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph);
+        FrameGraph(DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap);
 
     private:
 

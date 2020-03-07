@@ -5,6 +5,7 @@
 #include "Walker.h"
 #include "DrawableDistanceGraph.h"
 #include "DrawableSpeciesGraph.h"
+#include "DrawableDistanceHotMap.h"
 #include <wx/wx.h>
 #include <wx/cmdline.h>
 
@@ -21,6 +22,7 @@ class ValkyrieWalkerApp: public wxApp
     std::vector<Walker>         walkers;
     DrawableDistanceGraph       distanceGraph;
     DrawableSpeciesGraph        speciesGraph;
+    DrawableDistanceHotMap      distanceHotMap;
 
     public:
         ValkyrieWalkerApp();
