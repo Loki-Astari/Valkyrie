@@ -127,6 +127,8 @@ Walker::Walker(std::istream& stream)
 }
 
 Walker::Walker()
+    : currentScore(0)
+    , invalidScore(true)
 {
     std::default_random_engine&         generator   = ThorsUtil::Random::getRandomGenerator();
 
@@ -197,13 +199,17 @@ void Walker::normalize()
 
 void Walker::run()
 {
-    float score = 0;
-    for (int loop = 0; loop < 3000; ++loop)
+    if (invalidScore)
     {
-        score = tick();
+        float score = 0;
+        for (int loop = 0; loop < 3000; ++loop)
+        {
+            score = tick();
+        }
+        normalize();
+        currentScore = score;
+        invalidScore = false;
     }
-    currentScore = score;
-    normalize();
 }
 
 int Walker::tick()
@@ -318,6 +324,8 @@ void Walker::mutate()
 {
     // TODO
     normalize();
+    currentScore    = 0;
+    invalidScore    = true;
 }
 
 void Walker::spawn(Walker const& parent)
@@ -600,6 +608,8 @@ void Walker::load(std::istream& stream)
         swap(connections,tmpConection);
 
         normalize();
+        currentScore    = 0;
+        invalidScore    = true;
     }
 }
 

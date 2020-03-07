@@ -87,6 +87,7 @@ class Walker: public ThorsUI::Animateable
     std::vector<Muscle>     muscles;
     std::map<int, Con>      connections;
     int                     currentScore;
+    bool                    invalidScore;
     public:
         Walker();
         Walker(std::istream& stream);
