@@ -20,6 +20,7 @@ FrameGraph::FrameGraph(DrawableDistanceGraph& distanceGraph, DrawableSpeciesGrap
 
     wxSizer* sizer              = new wxBoxSizer(wxHORIZONTAL);
     sizer->Add(panelDistanceGraph, wxSizerFlags());
+    sizer->AddSpacer(10);
     sizer->Add(panelSpeciesGraph,  wxSizerFlags());
 
     SetSizerAndFit(sizer);
