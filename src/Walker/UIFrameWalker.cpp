@@ -14,6 +14,7 @@ BEGIN_EVENT_TABLE(FrameWalker, wxFrame)
     EVT_BUTTON(BUTTON_SAVE_ID,  FrameWalker::onSave)
     EVT_BUTTON(BUTTON_RUN1_ID,  FrameWalker::onRun1)
     EVT_BUTTON(BUTTON_SORT_ID,  FrameWalker::onSort)
+    EVT_BUTTON(BUTTON_UPDATE_ID,FrameWalker::onUpdate)
     EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalker::onEvolve)
 END_EVENT_TABLE()
 
@@ -29,12 +30,14 @@ FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& dista
     wxButton* buttonSave = new wxButton(panelButton, BUTTON_SAVE_ID, wxT("Save"));
     wxButton* buttonRun  = new wxButton(panelButton, BUTTON_RUN1_ID, wxT("Run 1"));
     wxButton* buttonSort = new wxButton(panelButton, BUTTON_SORT_ID, wxT("Sort"));
+    wxButton* buttonUpd  = new wxButton(panelButton, BUTTON_UPDATE_ID, wxT("Update"));
     wxButton* buttonEvlv = new wxButton(panelButton, BUTTON_EVOLVE_ID, wxT("Evolve"));
 
     wxSizer* buttonSizer = new wxStdDialogButtonSizer();
     buttonSizer->Add(buttonSave, wxSizerFlags());
     buttonSizer->Add(buttonRun,  wxSizerFlags());
     buttonSizer->Add(buttonSort, wxSizerFlags());
+    buttonSizer->Add(buttonUpd,  wxSizerFlags());
     buttonSizer->Add(buttonEvlv, wxSizerFlags());
     panelButton->SetSizer(buttonSizer);
 
@@ -105,8 +108,6 @@ void FrameWalker::onRun1(wxCommandEvent& /*event*/)
         }
         ++count;
     }
-    distanceGraph.tick();
-    speciesGraph.tick();
 }
 
 void FrameWalker::onSort(wxCommandEvent& /*event*/)
@@ -117,4 +118,10 @@ void FrameWalker::onSort(wxCommandEvent& /*event*/)
 void FrameWalker::onEvolve(wxCommandEvent& /*event*/)
 {
     panelWalker->evolve();
+}
+
+void FrameWalker::onUpdate(wxCommandEvent& /*event*/)
+{
+    distanceGraph.tick();
+    speciesGraph.tick();
 }
