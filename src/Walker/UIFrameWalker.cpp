@@ -1,6 +1,8 @@
 #include "UIFrameWalker.h"
 #include "UIFrameGraph.h"
 #include "Walker.h"
+#include "DrawableDistanceGraph.h"
+#include "DrawableSpeciesGraph.h"
 #include <wx/progdlg.h>
 #include <fstream>
 
@@ -15,11 +17,12 @@ BEGIN_EVENT_TABLE(FrameWalker, wxFrame)
     EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalker::onEvolve)
 END_EVENT_TABLE()
 
-FrameWalker::FrameWalker(std::vector<Walker>& walk, FrameGraph* frameGraph)
+FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph)
     : wxFrame(nullptr, wxID_ANY , wxT("Valkyrie"))
     , walkers(walk)
+    , distanceGraph(distanceGraph)
+    , speciesGraph(speciesGraph)
     , panelWalker(nullptr)
-    , frameGraph(frameGraph)
 {
 
     wxPanel*  panelButton= new wxPanel(this);
@@ -102,7 +105,8 @@ void FrameWalker::onRun1(wxCommandEvent& /*event*/)
         }
         ++count;
     }
-    frameGraph->tick();
+    distanceGraph.tick();
+    speciesGraph.tick();
 }
 
 void FrameWalker::onSort(wxCommandEvent& /*event*/)
