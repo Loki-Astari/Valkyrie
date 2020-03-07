@@ -2,6 +2,7 @@
 #include <cmath>
 #include <sstream>
 #include <iterator>
+#include <string>
 
 
 using namespace ThorsAnvil::ValkyrieWalker;
@@ -337,6 +338,14 @@ void Walker::spawn(Walker const& parent)
     mutate();
 
     normalize();
+}
+
+std::string Walker::species() const
+{
+#pragma vera-pushoff#
+    using namespace std::string_literals;
+#pragma vera-pop
+    return "N"s + std::to_string(nodes.size()) + "M"s + std::to_string(muscles.size());
 }
 
 void Walker::dropAndFindRestingPoint()

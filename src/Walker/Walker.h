@@ -91,12 +91,13 @@ class Walker: public ThorsUI::Animateable
     public:
         Walker();
         Walker(std::istream& stream);
-        void run();
-        int  score() const {return currentScore;}
-        int  tick();
-        void kill();
-        void mutate();
-        void spawn(Walker const& parent);
+        void        run();
+        int         score() const {return currentScore;}
+        int         tick();
+        void        kill();
+        void        mutate();
+        void        spawn(Walker const& parent);
+        std::string species() const;
 
         virtual wxSize  getSize()                           const   override;
         virtual void    drawAnimation(wxDC& dc, int step)   const   override;

@@ -2,6 +2,9 @@
 #define THORSANVIL_VALKYRIE_WALKER_DRAWABLE_SPECIES_GRAPH_H
 
 #include "ThorsUI/Drawable.h"
+#include <map>
+#include <vector>
+#include <string>
 
 namespace ThorsAnvil
 {
@@ -11,7 +14,12 @@ namespace ThorsAnvil
 class Walker;
 class DrawableSpeciesGraph: public ThorsAnvil::ThorsUI::Drawable
 {
-    std::vector<Walker>&            walkers;
+    using Counter       = std::vector<int>;
+    using SpecCounter   = std::map<std::string, Counter>;
+
+    std::vector<Walker>&    walkers;
+    SpecCounter             speciesCount;
+    int                     count;
 
     public:
         DrawableSpeciesGraph(std::vector<Walker>& walkers);
