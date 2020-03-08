@@ -25,10 +25,17 @@ Node::Node()
 {
     std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
     std::uniform_int_distribution<int>      positionDist(0, 1000);
-    std::uniform_int_distribution<int>      massDist(1, 10);
 
     position    = {positionDist(generator), positionDist(generator)};
     startState  = position;
+
+    mutateMass();
+}
+
+void Node::mutateMass()
+{
+    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_int_distribution<int>      massDist(1, 10);
     mass        = massDist(generator);
 }
 
@@ -78,11 +85,47 @@ Muscle::Muscle()
 
     std::tie(contractLen, extendedLen) = std::minmax(lenDist(generator), lenDist(generator));
     strength        = strenDist(generator);
-    extendedTime    = timerDist(generator) * 10;
-    contractTime    = timerDist(generator) * 10;
+    mutateExtendedTime();
+    mutateContractTime();
 
     currentSize = contractLen;
     startState  = currentSize;
+}
+
+void Muscle::mutateExtendedLen()
+{
+    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_real_distribution<float>   lenDist(0.1, 1.0);
+
+    float tmpContractLen      = contractLen;
+    float tmpExtendedLen      = lenDist(generator);
+    std::tie(contractLen, extendedLen) = std::minmax(tmpContractLen, tmpExtendedLen);
+}
+
+void Muscle::mutateContractLen()
+{
+    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_real_distribution<float>   lenDist(0.1, 1.0);
+
+    float tmpContractLen      = lenDist(generator);
+    float tmpExtendedLen      = extendedLen; 
+    std::tie(contractLen, extendedLen) = std::minmax(tmpContractLen, tmpExtendedLen);
+}
+
+void Muscle::mutateExtendedTime()
+{
+    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_int_distribution<int>      timerDist(1, 10);
+
+    extendedTime    = timerDist(generator) * 10;
+}
+
+void Muscle::mutateContractTime()
+{
+    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_int_distribution<int>      timerDist(1, 10);
+
+    contractTime    = timerDist(generator) * 10;
 }
 
 void Muscle::tick(int tick)
@@ -323,7 +366,88 @@ void Walker::kill()
 
 void Walker::mutate()
 {
-    // TODO
+    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
+
+    int onePercent      = (nodes.size() + muscles.size() * 4);
+    int mutate          = onePercent * 90;
+    int mutateOnePart   = mutate / 5;
+    int delMuscle       = onePercent * 3;
+    int addMuscle       = onePercent * 3;
+    int delNode         = onePercent * 2;
+    int addNode         = onePercent * 2;
+    int range           = mutate + delMuscle + addMuscle + delNode + addNode;
+    std::uniform_int_distribution<int>      dist(0, range);
+
+    int  random = dist(generator);
+    if (random < (1 * mutateOnePart))
+    {
+        // mutate mass;
+        std::uniform_int_distribution<int>      node(0, nodes.size() - 1);
+        int nodeId = node(generator);
+
+        nodes[nodeId].mutateMass();
+    }
+    else if (random < mutate)
+    {
+        std::uniform_int_distribution<int>      muscle(0, muscles.size() - 1);
+        int muscleId = muscle(generator);
+
+        if (random < (2 * mutateOnePart))
+        {
+            muscles[muscleId].mutateContractLen();
+        }
+        else if (random < (3 * mutateOnePart))
+        {
+            muscles[muscleId].mutateExtendedLen();
+        }
+        else if (random < (4 * mutateOnePart))
+        {
+            muscles[muscleId].mutateExtendedTime();
+        }
+        else
+        {
+            muscles[muscleId].mutateContractTime();
+        }
+    }
+    else if (random < (mutate + delMuscle))
+    {
+        // delMuscle
+        std::uniform_int_distribution<int>      muscle(0, muscles.size() - 1);
+        int muscleId = muscle(generator);
+
+        std::vector<Muscle>     muscles;
+        std::map<int, Con>      newConnections;
+        for (auto const& item: connections)
+        {
+            if (item.first == muscleId)
+            {
+                continue;
+            }
+            int index = item.first;
+            if (item.first > muscleId)
+            {
+                --index;
+            }
+            newConnections[index] = item.second;
+        }
+        muscles.erase(muscles.begin() + muscleId);
+        connections = newConnections;
+    }
+    else if (random < (mutate + delMuscle + addMuscle))
+    {
+        // addMuscle
+        muscles.emplace_back();
+
+    }
+    else if (random < (mutate + delMuscle + addMuscle + delNode))
+    {
+        // delNode
+    }
+    else
+    {
+        // addNode
+    }
+
     normalize();
     currentScore    = 0;
     invalidScore    = true;
@@ -336,8 +460,6 @@ void Walker::spawn(Walker const& parent)
     connections = parent.connections;
 
     mutate();
-
-    normalize();
 }
 
 std::string Walker::species() const

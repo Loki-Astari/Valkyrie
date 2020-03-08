@@ -34,6 +34,8 @@ class Node
     public:
         Node();
 
+        void mutateMass();
+
         Pos const&  getPos()    const;
         int         getMass()   const;
         void updatePos(Force const& f);
@@ -63,6 +65,12 @@ class Muscle
 
     public:
         Muscle();
+
+        void mutateExtendedLen();
+        void mutateContractLen();
+        void mutateExtendedTime();
+        void mutateContractTime();
+
         float getLen() const;
         void tick(int tick);
 
