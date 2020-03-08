@@ -116,6 +116,8 @@ class Walker: public ThorsUI::Animateable
     private:
         void normalize();
 
+        bool addRandomeMuscle();
+
         void reset();
 
         void minimizeStress(int maxRep = 100);

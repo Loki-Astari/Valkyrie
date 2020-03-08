@@ -207,31 +207,42 @@ Walker::Walker()
 
     // Generate a set of new muscles.
     std::uniform_int_distribution<int>  extraMuscles(0, maxMuscles);
-    std::uniform_int_distribution<int>  nodeGesser(0, nodes.size() - 1);
     int muscleCount = extraMuscles(generator);
     for (int loop = 0; loop < muscleCount; ++loop)
     {
-        int srcNode = nodeGesser(generator);
-        int dstNode;
-        do
+        if (!addRandomeMuscle())
         {
-            dstNode = nodeGesser(generator);
-        }
-        while (dstNode == srcNode);
-
-        Con bestCon = std::minmax(srcNode, dstNode);
-        auto find = std::find_if(std::begin(connections), std::end(connections), [&bestCon](auto const& value){return value.second == bestCon;});
-        if (find != std::end(connections))
-        {
-            // don't allow new muscles between nodes that already have a connection.
             continue;
         }
-
-        int musIndex = muscles.size();
-        muscles.emplace_back();
-        connections[musIndex] = bestCon;
     }
     normalize();
+}
+
+bool Walker::addRandomeMuscle()
+{
+    std::default_random_engine&         generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_int_distribution<int>  nodeGesser(0, nodes.size() - 1);
+
+    int srcNode = nodeGesser(generator);
+    int dstNode;
+    do
+    {
+        dstNode = nodeGesser(generator);
+    }
+    while (dstNode == srcNode);
+
+    Con bestCon = std::minmax(srcNode, dstNode);
+    auto find = std::find_if(std::begin(connections), std::end(connections), [&bestCon](auto const& value){return value.second == bestCon;});
+    if (find != std::end(connections))
+    {
+        // don't allow new muscles between nodes that already have a connection.
+        return false;
+    }
+
+    int musIndex = muscles.size();
+    muscles.emplace_back();
+    connections[musIndex] = bestCon;
+    return true;
 }
 
 void Walker::normalize()
