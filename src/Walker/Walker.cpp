@@ -442,27 +442,11 @@ void Walker::mutate()
     }
     else if (random < (mutate + delMuscle))
     {
-        // delMuscle
+        // Delete a Muscle
         std::uniform_int_distribution<int>      muscle(0, muscles.size() - 1);
         int muscleId = muscle(generator);
 
-        std::vector<Muscle>     muscles;
-        std::map<int, Con>      newConnections;
-        for (auto const& item: connections)
-        {
-            if (item.first == muscleId)
-            {
-                continue;
-            }
-            int index = item.first;
-            if (item.first > muscleId)
-            {
-                --index;
-            }
-            newConnections[index] = item.second;
-        }
-        muscles.erase(muscles.begin() + muscleId);
-        connections = newConnections;
+        removeMuscle(muscleId);
     }
     else if (random < (mutate + delMuscle + addMuscle))
     {
