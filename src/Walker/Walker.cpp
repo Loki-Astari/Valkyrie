@@ -450,9 +450,16 @@ void Walker::mutate()
     }
     else if (random < (mutate + delMuscle + addMuscle))
     {
-        // addMuscle
-        muscles.emplace_back();
-
+        // Add a Muscle
+        for (int loop = 0; loop < 5; ++loop)
+        {
+            // The call addRandomeMuscle() may fail.
+            // Give it 5 opertunities to work.
+            if (addRandomeMuscle())
+            {
+                break;
+            }
+        }
     }
     else if (random < (mutate + delMuscle + addMuscle + delNode))
     {
