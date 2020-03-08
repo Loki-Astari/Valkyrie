@@ -463,7 +463,46 @@ void Walker::mutate()
     }
     else if (random < (mutate + delMuscle + addMuscle + delNode))
     {
-        // delNode
+        // Delete a Node
+        std::uniform_int_distribution<int>      node(0, nodes.size() - 1);
+        int nodeId = node(generator);
+
+        bool foundAMuscle = false;
+        do
+        {
+            foundAMuscle = false;
+            // Iterate over the connections looking for a muscle
+            // That is connected to the node we are deleting.
+            // Note. When we delete the muscle the iterators are
+            // invalidated so we must start from the beginning
+            // again.
+            for (auto const& item: connections)
+            {
+                if (item.second.first == nodeId || item.second.second == nodeId)
+                {
+                    removeMuscle(item.first);
+                    foundAMuscle = true;
+                    break;
+                }
+            }
+        }
+        while (foundAMuscle);
+
+        // Remove the node.
+        nodes.erase(std::begin(nodes) + nodeId);
+        // Adjust all muscles to make sure they
+        // are correct to the correct node.
+        for (auto& item: connections)
+        {
+            if (item.second.first > nodeId)
+            {
+                --item.second.first;
+            }
+            if (item.second.second > nodeId)
+            {
+                --item.second.second;
+            }
+        }
     }
     else
     {
