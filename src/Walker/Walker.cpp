@@ -375,6 +375,26 @@ void Walker::kill()
     normalize();
 }
 
+void Walker::removeMuscle(int muscleId)
+{
+    std::map<int, Con>      newConnections;
+    for (auto const& item: connections)
+    {
+        if (item.first == muscleId)
+        {
+            continue;
+        }
+        int index = item.first;
+        if (item.first > muscleId)
+        {
+            --index;
+        }
+        newConnections[index] = item.second;
+    }
+    muscles.erase(muscles.begin() + muscleId);
+    connections = newConnections;
+}
+
 void Walker::mutate()
 {
     std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
