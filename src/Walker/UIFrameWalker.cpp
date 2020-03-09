@@ -17,6 +17,7 @@ BEGIN_EVENT_TABLE(FrameWalker, wxFrame)
     EVT_BUTTON(BUTTON_SORT_ID,  FrameWalker::onSort)
     EVT_BUTTON(BUTTON_UPDATE_ID,FrameWalker::onUpdate)
     EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalker::onEvolve)
+    EVT_BUTTON(BUTTON_RUN1K_ID, FrameWalker::onRun1K)
 END_EVENT_TABLE()
 
 FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap)
@@ -34,6 +35,7 @@ FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& dista
     wxButton* buttonSort = new wxButton(panelButton, BUTTON_SORT_ID, wxT("Sort"));
     wxButton* buttonUpd  = new wxButton(panelButton, BUTTON_UPDATE_ID, wxT("Update"));
     wxButton* buttonEvlv = new wxButton(panelButton, BUTTON_EVOLVE_ID, wxT("Evolve"));
+    wxButton* buttonR1K  = new wxButton(panelButton, BUTTON_RUN1K_ID,  wxT("Run 1K"));
 
     wxSizer* buttonSizer = new wxStdDialogButtonSizer();
     buttonSizer->Add(buttonSave, wxSizerFlags());
@@ -41,6 +43,8 @@ FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& dista
     buttonSizer->Add(buttonSort, wxSizerFlags());
     buttonSizer->Add(buttonUpd,  wxSizerFlags());
     buttonSizer->Add(buttonEvlv, wxSizerFlags());
+    buttonSizer->AddSpacer(20);
+    buttonSizer->Add(buttonR1K,  wxSizerFlags());
     panelButton->SetSizer(buttonSizer);
 
     panelWalker = new PanelWalkerCrowd(this, walkers);
@@ -127,4 +131,62 @@ void FrameWalker::onUpdate(wxCommandEvent& /*event*/)
     distanceGraph.tick();
     speciesGraph.tick();
     distanceHotMap.tick();
+}
+
+void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
+{
+    std::default_random_engine&     generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_real_distribution  random;
+
+    wxProgressDialog* dialog = new wxProgressDialog(wxT("Running 1K"), wxT("Progress: "), 100, this, wxPD_APP_MODAL);
+
+    for(int loop = 0; loop < 100; ++loop)
+    {
+        for (auto& walker: walkers)
+        {
+            walker.run();
+        }
+
+        // ------
+
+        std::stable_sort(std::begin(walkers), std::end(walkers), [](Walker const& lhs, Walker const& rhs){return lhs.score() > rhs.score();});
+
+        // ------
+
+        distanceGraph.tick(true);
+        speciesGraph.tick(true);
+        distanceHotMap.tick(true);
+        if (panelWalker)
+        {
+            panelWalker->Refresh();
+        }
+
+        // ------
+
+        int evolveParent = 0;
+        for (std::size_t wakLoop = 0;wakLoop < walkers.size(); ++wakLoop)
+        {
+            // We want to kill approx 50% of the walkers.
+            // The better scoring Walkers will have a higher chance of surviving.
+            // The worse scoring Walkers will have a lower chance of surviving.
+            if (random(generator) < (wakLoop * 1.0 / walkers.size()) || walkers[wakLoop].wasKilled())
+            {
+                walkers[wakLoop].kill();
+                walkers[wakLoop].spawn(walkers[evolveParent++]);
+            }
+            // Even if we don't die there is an additional 25% chance of
+            // of a random mutation.
+            else if (wakLoop != 0 && random(generator) < 0.25)
+            {
+                walkers[wakLoop].mutate();
+            }
+        }
+
+        // ------
+
+        dialog->Update(loop);
+
+        // ------
+    }
+    dialog->Destroy();
 }

@@ -22,6 +22,7 @@ class FrameWalker: public wxFrame
     static constexpr int BUTTON_SORT_ID       = wxID_HIGHEST + 3;
     static constexpr int BUTTON_UPDATE_ID     = wxID_HIGHEST + 4;
     static constexpr int BUTTON_EVOLVE_ID     = wxID_HIGHEST + 5;
+    static constexpr int BUTTON_RUN1K_ID      = wxID_HIGHEST + 6;
 
     std::vector<Walker>&        walkers;
     DrawableDistanceGraph&      distanceGraph;
@@ -40,6 +41,7 @@ class FrameWalker: public wxFrame
         void onSort(wxCommandEvent& event);
         void onUpdate(wxCommandEvent& event);
         void onEvolve(wxCommandEvent& event);
+        void onRun1K(wxCommandEvent& event);
 
         DECLARE_EVENT_TABLE()
 };
