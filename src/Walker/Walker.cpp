@@ -483,15 +483,15 @@ void Walker::removeNode(int nodeId)
 void Walker::mutate()
 {
     const int onePercent            = (nodes.size() + muscles.size() * 4);
-    const int mutate                = onePercent * 90;
+    const int mutate                = onePercent * 94;
     // If we have very few muscles then deleting them is not an option.
     // So increase the chance to add Muscle.
-    const int delMuscle             = onePercent * (muscles.size() < nodes.size() ? 0 : 3);
-    const int addMuscle             = onePercent * (muscles.size() < nodes.size() ? 6 : 3);
+    const int delMuscle             = onePercent * (muscles.size() < nodes.size() ? 0 : 1);
+    const int addMuscle             = onePercent * (muscles.size() < nodes.size() ? 2 : 1);
     // If we have very few nodes then deleting them is not an option.
     // So increase the chance to add Nodes.
-    const int delNode               = onePercent * (nodes.size() < 3 ? 0 : 2);
-    const int addNode               = onePercent * (nodes.size() < 3 ? 4 : 2);
+    const int delNode               = onePercent * (nodes.size() < 3 ? 0 : 1);
+    const int addNode               = onePercent * (nodes.size() < 3 ? 2 : 1);
 
     // Note there is a chance that we have a chance there are zero muscles.
     // This happens when the node blows up due to stress between muscles.
