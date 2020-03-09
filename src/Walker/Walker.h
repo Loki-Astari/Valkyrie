@@ -100,7 +100,7 @@ class Walker: public ThorsUI::Animateable
         Walker();
         Walker(std::istream& stream);
         void        run();
-        int         score() const {return currentScore;}
+        int         score() const {return invalidScore ? 0 : currentScore;}
         int         tick();
         void        kill();
         bool        wasKilled() const;
