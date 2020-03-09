@@ -86,7 +86,7 @@ void PanelWalkerCrowd::evolve()
         // We want to kill approx 50% of the walkers.
         // The better scoring Walkers will have a higher chance of surviving.
         // The worse scoring Walkers will have a lower chance of surviving.
-        if (random(generator) < (loop * 1.0 / maxCount))
+        if (random(generator) < (loop * 1.0 / maxCount) || buttons[loop].wasKilled())
         {
             state = Die;
         }
@@ -172,6 +172,11 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w
 void PanelWalkerCrowd::WalkerButton::kill()
 {
     walker.kill();
+}
+
+bool PanelWalkerCrowd::WalkerButton::wasKilled() const
+{
+    return walker.wasKilled();
 }
 
 void PanelWalkerCrowd::WalkerButton::mutate()

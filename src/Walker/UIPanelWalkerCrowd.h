@@ -30,6 +30,7 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
             virtual wxSize  getSize()       const override;
 
             void kill();
+            bool wasKilled() const;
             void mutate();
             void spawn(WalkerButton const& parent);
 

@@ -375,6 +375,11 @@ void Walker::kill()
     normalize();
 }
 
+bool Walker::wasKilled() const
+{
+    return nodes.size() < 2 || muscles.size() < 1;
+}
+
 void Walker::removeMuscle(int muscleId)
 {
     std::map<int, Con>      newConnections;

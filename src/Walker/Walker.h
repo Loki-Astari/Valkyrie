@@ -103,6 +103,7 @@ class Walker: public ThorsUI::Animateable
         int         score() const {return currentScore;}
         int         tick();
         void        kill();
+        bool        wasKilled() const;
         void        mutate();
         void        spawn(Walker const& parent);
         std::string species() const;
