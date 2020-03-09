@@ -4,7 +4,7 @@
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
-DrawableDistanceGraph::DrawableDistanceGraph(std::vector<Walker>& walkersR)
+DrawableDistanceGraph::DrawableDistanceGraph(std::vector<Walker> const& walkersR)
     : walkers(walkersR)
     , distance(20)
     , minValue(0)

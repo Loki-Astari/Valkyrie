@@ -12,10 +12,13 @@ namespace ThorsAnvil
 class Walker;
 class DrawableDistanceHotMap: public ThorsAnvil::ThorsUI::Drawable
 {
-    std::vector<Walker>&            walkers;
+    std::vector<Walker> const&      walkers;
+    std::vector<int>                count;
+    float                           distYRel;
+
 
     public:
-        DrawableDistanceHotMap(std::vector<Walker>& walkers);
+        DrawableDistanceHotMap(std::vector<Walker> const& walkers);
 
         virtual void    draw(wxDC& dc)  const override;
         virtual wxSize  getSize()       const override;

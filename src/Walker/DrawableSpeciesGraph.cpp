@@ -3,7 +3,7 @@
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
-DrawableSpeciesGraph::DrawableSpeciesGraph(std::vector<Walker>& walkersR)
+DrawableSpeciesGraph::DrawableSpeciesGraph(std::vector<Walker> const& walkersR)
     : walkers(walkersR)
     , count(0)
 {

@@ -12,7 +12,7 @@ namespace ThorsAnvil
 class Walker;
 class DrawableDistanceGraph: public ThorsAnvil::ThorsUI::Drawable
 {
-    std::vector<Walker>&            walkers;
+    std::vector<Walker> const&      walkers;
     std::vector<std::vector<int>>   distance;
     int                             minValue;
     int                             maxValue;
@@ -20,7 +20,7 @@ class DrawableDistanceGraph: public ThorsAnvil::ThorsUI::Drawable
     bool                            drawSmall;
 
     public:
-        DrawableDistanceGraph(std::vector<Walker>& walkers);
+        DrawableDistanceGraph(std::vector<Walker> const& walkers);
 
         virtual void    draw(wxDC& dc)  const override;
         virtual wxSize  getSize()       const override;

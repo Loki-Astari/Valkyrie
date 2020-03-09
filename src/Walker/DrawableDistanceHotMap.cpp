@@ -3,7 +3,7 @@
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
-DrawableDistanceHotMap::DrawableDistanceHotMap(std::vector<Walker>& walkersR)
+DrawableDistanceHotMap::DrawableDistanceHotMap(std::vector<Walker> const& walkersR)
     : walkers(walkersR)
 {
     (void)walkers;
