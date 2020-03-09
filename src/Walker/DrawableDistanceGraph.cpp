@@ -1,5 +1,6 @@
 #include "DrawableDistanceGraph.h"
 #include "Walker.h"
+#include <set>
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
@@ -9,6 +10,7 @@ DrawableDistanceGraph::DrawableDistanceGraph(std::vector<Walker>& walkersR)
     , minValue(0)
     , maxValue(0)
     , count(0)
+    , drawSmall(true)
 {
     (void)walkers;
 }
@@ -38,13 +40,19 @@ void DrawableDistanceGraph::draw(wxDC& dc) const
     if (count > 1)
     {
         dc.SetPen(*wxLIGHT_GREY_PEN);
-        for (auto const& line: distance)
+        std::set<std::size_t>    smallSet{0, 7, 9, 11, 13, 19};
+
+        for (std::size_t lineId = 0; lineId < distance.size(); ++lineId)
         {
+            if (drawSmall && smallSet.find(lineId) == smallSet.end())
+            {
+                continue;
+            }
             std::vector<wxPoint>    points(count);
 
-            for (std::size_t loop = 0; loop < line.size(); ++loop)
+            for (std::size_t loop = 0; loop < distance[lineId].size(); ++loop)
             {
-                points[loop]    = wxPoint{static_cast<int>(centX + distXRel * loop), static_cast<int>(centY - distYRel * line[loop])};
+                points[loop]    = wxPoint{static_cast<int>(centX + distXRel * loop), static_cast<int>(centY - distYRel * distance[lineId][loop])};
             }
             dc.DrawLines(count, points.data());
         }

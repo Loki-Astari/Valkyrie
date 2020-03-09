@@ -17,6 +17,7 @@ class DrawableDistanceGraph: public ThorsAnvil::ThorsUI::Drawable
     int                             minValue;
     int                             maxValue;
     int                             count;
+    bool                            drawSmall;
 
     public:
         DrawableDistanceGraph(std::vector<Walker>& walkers);
