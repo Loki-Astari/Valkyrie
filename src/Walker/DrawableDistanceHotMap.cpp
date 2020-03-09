@@ -5,6 +5,8 @@ using namespace ThorsAnvil::ValkyrieWalker;
 
 DrawableDistanceHotMap::DrawableDistanceHotMap(std::vector<Walker> const& walkersR)
     : walkers(walkersR)
+    , minScore(0)
+    , maxScore(0)
 {
     (void)walkers;
 }
@@ -16,11 +18,16 @@ void DrawableDistanceHotMap::draw(wxDC& dc) const
     dc.DrawRectangle(wxPoint{0,0}, size);
 
     dc.SetPen(*wxBLACK_PEN);
+    int     maxCount    = walkers.size() / 2;
+    float   distYRel    = (size.y - 20) * 1.0 / maxCount;
+    float   distXRel    = (size.y - 20) * 1.0 / count.size();
+    int     width       = static_cast<int>(distXRel);
+
     for (std::size_t loop = 0; loop < count.size(); ++loop)
     {
-        int xCord   = 10 + loop * 10;
+        int xCord   = 10 + distXRel * loop;
         int height  = count[loop] * distYRel * -1;
-        dc.DrawRectangle(wxPoint{xCord, size.y -10}, wxSize{10, height});
+        dc.DrawRectangle(wxPoint{xCord, size.y -10}, wxSize{width, height});
     }
 }
 
@@ -33,17 +40,14 @@ extern wxPanel* panelDistanceMap;
 
 void DrawableDistanceHotMap::tick(bool update)
 {
-    wxSize size = getSize();
-    int     minBucketWidth  = 10;
-    int     maxBucketCount  = (size.x - 20) / minBucketWidth;
+    int     maxBucketCount  = 75;
 
-    int     maxValue        = std::max(0, walkers[0].score() + 1);
-    int     minValue        = std::min(0, walkers[99].score() - 1);
-    float   bucketRange     = (maxValue - minValue) * 1.0 / maxBucketCount;
-    int     posBucketCount  = (maxValue / bucketRange ) + 1;
-    int     negBucketCount  = (-minValue / bucketRange) + 1;
+    maxScore        = std::max(maxScore, walkers[0].score() + 1);
+    minScore        = std::min(minScore, walkers[99].score() - 1);
+    float   bucketRange     = (maxScore - minScore) * 1.0 / maxBucketCount;
+    int     posBucketCount  = (maxScore / bucketRange ) + 1;
+    int     negBucketCount  = (-minScore / bucketRange) + 1;
     int     totalCount      = posBucketCount + negBucketCount;
-    int     maxCount        = 1;
 
     count.clear();
     count.resize(totalCount, 0);
@@ -62,10 +66,7 @@ void DrawableDistanceHotMap::tick(bool update)
             bucketIndex = negBucketCount + score / bucketRange;
         }
         ++count[bucketIndex];
-        maxCount = std::max(maxCount, count[bucketIndex]);
     }
-
-    distYRel    = (size.y - 20) * 1.0 / maxCount;
 
     if (panelDistanceMap && update)
     {

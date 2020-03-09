@@ -14,7 +14,8 @@ class DrawableDistanceHotMap: public ThorsAnvil::ThorsUI::Drawable
 {
     std::vector<Walker> const&      walkers;
     std::vector<int>                count;
-    float                           distYRel;
+    int                             minScore;
+    int                             maxScore;
 
 
     public:
