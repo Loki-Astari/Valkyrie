@@ -64,9 +64,9 @@ wxSize DrawableDistanceHotMap::getSize() const
 
 extern wxPanel* panelDistanceMap;
 
-void DrawableDistanceHotMap::tick()
+void DrawableDistanceHotMap::tick(bool update)
 {
-    if (panelDistanceMap)
+    if (panelDistanceMap && update)
     {
         panelDistanceMap->Refresh();
     }

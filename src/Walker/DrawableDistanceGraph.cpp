@@ -58,7 +58,7 @@ wxSize DrawableDistanceGraph::getSize() const
 
 extern wxPanel* panelDistanceGraph;
 
-void DrawableDistanceGraph::tick()
+void DrawableDistanceGraph::tick(bool update)
 {
     distance[0].emplace_back(walkers[0].score());
     distance[1].emplace_back(walkers[1].score());
@@ -85,7 +85,7 @@ void DrawableDistanceGraph::tick()
     minValue = std::min(minValue, distance[19].back());
 
     ++count;
-    if (panelDistanceGraph)
+    if (panelDistanceGraph && update)
     {
         panelDistanceGraph->Refresh();
     }

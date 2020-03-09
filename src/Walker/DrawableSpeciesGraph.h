@@ -27,7 +27,7 @@ class DrawableSpeciesGraph: public ThorsAnvil::ThorsUI::Drawable
         virtual void    draw(wxDC& dc)  const override;
         virtual wxSize  getSize()       const override;
 
-        void tick();
+        void tick(bool update = true);
 };
 
 
