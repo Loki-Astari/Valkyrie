@@ -182,20 +182,8 @@ Walker::Walker()
     // Add a set of random nodes that are randomly connected to one other node.
     std::uniform_int_distribution<int>  extraNodes(1,7);
     int nodeCount = extraNodes(generator);
-    for (int loop = 0; loop < nodeCount; ++loop)
-    {
-        auto    prevNode = ThorsUtil::getRandomContainerIterator(nodes, generator);
-        int     srcIndex = std::distance(std::begin(nodes), prevNode);
-        int     dstIndex = nodes.size();
-        int     musIndex = muscles.size();
 
-        Muscle  newMuscle;
-        Node    newNode;
-
-        nodes.emplace_back();
-        muscles.emplace_back();
-        connections[musIndex] = Con(srcIndex, dstIndex);
-    }
+    addRandomNode(nodeCount);
 
     // If every node is connected to every other node
     // Then we would have "maxMuscles"
@@ -203,46 +191,97 @@ Walker::Walker()
 
     // Must reduce this count by the number of muscles we have
     // already assigned.
-    maxMuscles -= (nodes.size() - 1);
+    maxMuscles -= (muscles.size() - 1);
+    addNodeConnections(maxMuscles);
+
+    normalize();
+}
+
+void Walker::addRandomNode(int nodeCount)
+{
+    std::default_random_engine&         generator   = ThorsUtil::Random::getRandomGenerator();
+
+    for (int loop = 0; loop < nodeCount; ++loop)
+    {
+        auto    prevNode = ThorsUtil::getRandomContainerIterator(nodes, generator);
+        int     srcIndex = std::distance(std::begin(nodes), prevNode);
+        int     dstIndex = nodes.size();
+        int     musIndex = muscles.size();
+
+        nodes.emplace_back();
+        muscles.emplace_back();
+        connections[musIndex] = Con(srcIndex, dstIndex);
+    }
+}
+
+void Walker::addRandomNodeWithConnection()
+{
+    // When adding a muscle the most muscles we can add is
+    // one muscle from each other node to this one.
+    // So 'nodes.size()' is the maximum number of muscles we can add.
+    //
+    // Subtract one from this number because adding the node
+    // automatically one muscle.
+    int maxMusclesToAdd = nodes.size() - 1;
+    int newNodeId       = nodes.size();
+
+    addRandomNode(1);
+    addNodeConnections(maxMusclesToAdd, newNodeId);
+}
+
+void Walker::addNodeConnections(int maxMuscles, int src)
+{
+    std::default_random_engine&         generator   = ThorsUtil::Random::getRandomGenerator();
 
     // Generate a set of new muscles.
     std::uniform_int_distribution<int>  extraMuscles(0, maxMuscles);
     int muscleCount = extraMuscles(generator);
     for (int loop = 0; loop < muscleCount; ++loop)
     {
-        if (!addRandomeMuscle())
+        if (!addRandomMuscle(1, src))
         {
             continue;
         }
     }
-    normalize();
 }
 
-bool Walker::addRandomeMuscle()
+bool Walker::addRandomMuscle(int tryCount, int srcNode)
 {
+    if (nodes.size() == 1)
+    {
+        return false;
+    }
     std::default_random_engine&         generator   = ThorsUtil::Random::getRandomGenerator();
     std::uniform_int_distribution<int>  nodeGesser(0, nodes.size() - 1);
 
-    int srcNode = nodeGesser(generator);
-    int dstNode;
-    do
+    if (srcNode == -1)
     {
-        dstNode = nodeGesser(generator);
-    }
-    while (dstNode == srcNode);
-
-    Con bestCon = std::minmax(srcNode, dstNode);
-    auto find = std::find_if(std::begin(connections), std::end(connections), [&bestCon](auto const& value){return value.second == bestCon;});
-    if (find != std::end(connections))
-    {
-        // don't allow new muscles between nodes that already have a connection.
-        return false;
+        srcNode = nodeGesser(generator);
     }
 
-    int musIndex = muscles.size();
-    muscles.emplace_back();
-    connections[musIndex] = bestCon;
-    return true;
+    for (int loop = 0; loop < tryCount; ++loop)
+    {
+        int dstNode;
+        do
+        {
+            dstNode = nodeGesser(generator);
+        }
+        while (dstNode == srcNode);
+
+        Con bestCon = std::minmax(srcNode, dstNode);
+        auto find = std::find_if(std::begin(connections), std::end(connections), [&bestCon](auto const& value){return value.second == bestCon;});
+        if (find != std::end(connections))
+        {
+            // don't allow new muscles between nodes that already have a connection.
+            continue;
+        }
+
+        int musIndex = muscles.size();
+        muscles.emplace_back();
+        connections[musIndex] = bestCon;
+        return true;
+    }
+    return false;
 }
 
 void Walker::normalize()
@@ -397,122 +436,112 @@ void Walker::removeMuscle(int muscleId)
         newConnections[index] = item.second;
     }
     muscles.erase(muscles.begin() + muscleId);
+    connections.clear();
     connections = newConnections;
 }
 
-void Walker::mutate()
+void Walker::removeNode(int nodeId)
 {
-    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
-
-    int onePercent      = (nodes.size() + muscles.size() * 4);
-    int mutate          = onePercent * 90;
-    int mutateOnePart   = mutate / 5;
-    int delMuscle       = onePercent * 3;
-    int addMuscle       = onePercent * 3;
-    int delNode         = onePercent * 2;
-    int addNode         = onePercent * 2;
-    int range           = mutate + delMuscle + addMuscle + delNode + addNode;
-    std::uniform_int_distribution<int>      dist(0, range);
-
-    int  random = dist(generator);
-    if (random < (1 * mutateOnePart))
+    bool foundAMuscle = false;
+    do
     {
-        // mutate mass;
-        std::uniform_int_distribution<int>      node(0, nodes.size() - 1);
-        int nodeId = node(generator);
-
-        nodes[nodeId].mutateMass();
-    }
-    else if (random < mutate)
-    {
-        std::uniform_int_distribution<int>      muscle(0, muscles.size() - 1);
-        int muscleId = muscle(generator);
-
-        if (random < (2 * mutateOnePart))
+        foundAMuscle = false;
+        // Iterate over the connections looking for a muscle
+        // That is connected to the node we are deleting.
+        // Note. When we delete the muscle the iterators are
+        // invalidated so we must start from the beginning
+        // again.
+        for (auto const& item: connections)
         {
-            muscles[muscleId].mutateContractLen();
-        }
-        else if (random < (3 * mutateOnePart))
-        {
-            muscles[muscleId].mutateExtendedLen();
-        }
-        else if (random < (4 * mutateOnePart))
-        {
-            muscles[muscleId].mutateExtendedTime();
-        }
-        else
-        {
-            muscles[muscleId].mutateContractTime();
-        }
-    }
-    else if (random < (mutate + delMuscle))
-    {
-        // Delete a Muscle
-        std::uniform_int_distribution<int>      muscle(0, muscles.size() - 1);
-        int muscleId = muscle(generator);
-
-        removeMuscle(muscleId);
-    }
-    else if (random < (mutate + delMuscle + addMuscle))
-    {
-        // Add a Muscle
-        for (int loop = 0; loop < 5; ++loop)
-        {
-            // The call addRandomeMuscle() may fail.
-            // Give it 5 opertunities to work.
-            if (addRandomeMuscle())
+            if (item.second.first == nodeId || item.second.second == nodeId)
             {
+                removeMuscle(item.first);
+                foundAMuscle = true;
                 break;
             }
         }
     }
-    else if (random < (mutate + delMuscle + addMuscle + delNode))
+    while (foundAMuscle);
+
+    // Remove the node.
+    nodes.erase(std::begin(nodes) + nodeId);
+    // Adjust all muscles to make sure they
+    // are correct to the correct node.
+    for (auto& item: connections)
     {
-        // Delete a Node
+        if (item.second.first > nodeId)
+        {
+            --item.second.first;
+        }
+        if (item.second.second > nodeId)
+        {
+            --item.second.second;
+        }
+    }
+}
+
+void Walker::mutate()
+{
+    const int onePercent            = (nodes.size() + muscles.size() * 4);
+    const int mutate                = onePercent * 90;
+    // If we have very few muscles then deleting them is not an option.
+    // So increase the chance to add Muscle.
+    const int delMuscle             = onePercent * (muscles.size() < nodes.size() ? 0 : 3);
+    const int addMuscle             = onePercent * (muscles.size() < nodes.size() ? 6 : 3);
+    // If we have very few nodes then deleting them is not an option.
+    // So increase the chance to add Nodes.
+    const int delNode               = onePercent * (nodes.size() < 3 ? 0 : 2);
+    const int addNode               = onePercent * (nodes.size() < 3 ? 4 : 2);
+
+    // Note there is a chance that we have a chance there are zero muscles.
+    // This happens when the node blows up due to stress between muscles.
+    const int mutateNodePart        = mutate * (nodes.size() * 1.0 / onePercent);
+    const int mutateMusclePart      = (mutate - mutateNodePart) / 4;
+
+    // The max for each range.
+    const int part1_MutateNode      = mutateNodePart;
+    const int part2_DelNode         = part1_MutateNode + delNode;
+    const int part3_AddNode         = part2_DelNode    + addNode;
+    const int sectionA_Nodes        = part3_AddNode;
+
+    // Muscles
+    const int part4_ExtendedLen     = part3_AddNode      + mutateMusclePart;
+    const int part5_ContractLen     = part4_ExtendedLen  + mutateMusclePart;
+    const int part6_ExtendedTime    = part5_ContractLen  + mutateMusclePart;
+    const int part7_ContractTime    = part6_ExtendedTime + mutateMusclePart;
+    const int part8_DelMuscle       = part7_ContractTime + delMuscle;
+    const int part9_AddMuscle       = part8_DelMuscle    + addMuscle;
+    const int SectionB_Muscles      = part9_AddMuscle;
+    const int allPosabilities       = SectionB_Muscles;
+
+    std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
+    std::uniform_int_distribution<int>      dist(0, allPosabilities - 1);
+    int  random = dist(generator);
+
+    if (random < sectionA_Nodes)
+    {
         std::uniform_int_distribution<int>      node(0, nodes.size() - 1);
         int nodeId = node(generator);
 
-        bool foundAMuscle = false;
-        do
-        {
-            foundAMuscle = false;
-            // Iterate over the connections looking for a muscle
-            // That is connected to the node we are deleting.
-            // Note. When we delete the muscle the iterators are
-            // invalidated so we must start from the beginning
-            // again.
-            for (auto const& item: connections)
-            {
-                if (item.second.first == nodeId || item.second.second == nodeId)
-                {
-                    removeMuscle(item.first);
-                    foundAMuscle = true;
-                    break;
-                }
-            }
-        }
-        while (foundAMuscle);
-
-        // Remove the node.
-        nodes.erase(std::begin(nodes) + nodeId);
-        // Adjust all muscles to make sure they
-        // are correct to the correct node.
-        for (auto& item: connections)
-        {
-            if (item.second.first > nodeId)
-            {
-                --item.second.first;
-            }
-            if (item.second.second > nodeId)
-            {
-                --item.second.second;
-            }
-        }
+        if (random < part1_MutateNode)          {nodes[nodeId].mutateMass();}
+        else if (random < part2_DelNode)        {removeNode(nodeId);}
+        else if (random < part3_AddNode)        {addRandomNodeWithConnection();}
+        else                                    {/* ERROR */std::cerr << "Error: Node\n";}
     }
-    else
+    else if (random < SectionB_Muscles)
     {
-        // addNode
+        std::uniform_int_distribution<int>      muscle(0, muscles.size() - 1);
+        int muscleId = muscle(generator);
+
+        if (random < part4_ExtendedLen)         {muscles[muscleId].mutateContractLen();}
+        else if (random < part5_ContractLen)    {muscles[muscleId].mutateExtendedLen();}
+        else if (random < part6_ExtendedTime)   {muscles[muscleId].mutateExtendedTime();}
+        else if (random < part7_ContractTime)   {muscles[muscleId].mutateContractTime();}
+        else if (random < part8_DelMuscle)      {removeMuscle(muscleId);}
+        else if (random < part9_AddMuscle)      {addRandomMuscle(5);}
+        else                                    {/* ERROR */std::cerr << "Error: Muscle\n";}
     }
+    else                                        {/* ERROR */std::cerr << "Error: Unknown\n";}
 
     normalize();
     currentScore    = 0;

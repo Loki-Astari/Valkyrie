@@ -117,8 +117,12 @@ class Walker: public ThorsUI::Animateable
     private:
         void normalize();
 
-        bool addRandomeMuscle();
+        bool addRandomMuscle(int tryCount = 1, int srcNode = -1);
         void removeMuscle(int muscleId);
+        void addRandomNode(int nodeCount);
+        void removeNode(int nodeId);
+        void addNodeConnections(int maxMuscles, int src = -1);
+        void addRandomNodeWithConnection();
 
         void reset();
 
