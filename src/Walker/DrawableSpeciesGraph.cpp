@@ -80,6 +80,43 @@ void DrawableSpeciesGraph::tick(bool update)
     }
 }
 
+void DrawableSpeciesGraph::load(std::istream& stream)
+{
+    using Counter       = std::vector<int>;
+    using SpecCounter   = std::map<std::string, Counter>;
+
+    SpecCounter                 tmpSpeciesCount;
+    int                         tmpCount;
+    int                         sizeCount;
+
+    if (stream >> tmpCount >> sizeCount)
+    {
+        for (int loop = 0; loop < sizeCount; ++loop)
+        {
+            std::string name;
+            int         count;
+
+            if (stream >> name >> count)
+            {
+                auto& vec = tmpSpeciesCount[name];
+                for (int index = 0; index < count; ++index)
+                {
+                    int val;
+                    if (stream >> val)
+                    {
+                        vec.emplace_back(val);
+                    }
+                }
+            }
+        }
+    }
+    if (stream)
+    {
+        count           = tmpCount;
+        speciesCount    = std::move(tmpSpeciesCount);
+    }
+}
+
 void DrawableSpeciesGraph::save(std::ostream& stream) const
 {
     stream << count << " " << speciesCount.size() << "\n";

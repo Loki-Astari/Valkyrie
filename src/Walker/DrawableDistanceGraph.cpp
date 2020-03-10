@@ -99,6 +99,42 @@ void DrawableDistanceGraph::tick(bool update)
     }
 }
 
+void DrawableDistanceGraph::load(std::istream& stream)
+{
+    std::vector<std::vector<int>>   tmpDistance;
+    int                             tmpMinValue;
+    int                             tmpMaxValue;
+    int                             tmpCount;
+    int                             sizeCount;
+    if (stream >> tmpMinValue >> tmpMaxValue >> tmpCount >> sizeCount)
+    {
+        for (int loop = 0; loop < sizeCount; ++loop)
+        {
+            int  count;
+            if (stream >> count)
+            {
+                tmpDistance.emplace_back();
+                for (int index = 0; index < count; ++index)
+                {
+                    int val;
+                    if (stream >> val)
+                    {
+                        tmpDistance.back().emplace_back(val);
+                    }
+                }
+            }
+        }
+    }
+    if (stream)
+    {
+        distance    = std::move(tmpDistance);
+        minValue    = tmpMinValue;
+        maxValue    = tmpMaxValue;
+        count       = tmpCount;
+        drawSmall   = true;
+    }
+}
+
 void DrawableDistanceGraph::save(std::ostream& stream) const
 {
     stream << minValue << " " << maxValue << " " << count << " " << distance.size() << "\n";

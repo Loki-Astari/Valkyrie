@@ -26,8 +26,14 @@ class DrawableDistanceGraph: public ThorsAnvil::ThorsUI::Drawable
         virtual wxSize  getSize()       const override;
 
         void tick(bool update = true);
+        void load(std::istream& stream);
         void save(std::ostream& stream) const;
 
+        friend std::istream& operator>>(std::istream& stream, DrawableDistanceGraph& data)
+        {
+            data.load(stream);
+            return stream;
+        }
         friend std::ostream& operator<<(std::ostream& stream, DrawableDistanceGraph const& data)
         {
             data.save(stream);

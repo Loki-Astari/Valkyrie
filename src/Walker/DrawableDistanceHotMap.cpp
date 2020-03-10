@@ -74,6 +74,32 @@ void DrawableDistanceHotMap::tick(bool update)
     }
 }
 
+void DrawableDistanceHotMap::load(std::istream& stream)
+{
+    int                 tmpMinScore;
+    int                 tmpMaxScore;
+    std::vector<int>    tmpCount;
+    int                 sizeCount;
+
+    if (stream >> tmpMinScore >> tmpMaxScore >> sizeCount)
+    {
+        for (int loop = 0; loop < sizeCount; ++loop)
+        {
+            int val;
+            if (stream >> val)
+            {
+                tmpCount.emplace_back(val);
+            }
+        }
+    }
+    if (stream)
+    {
+        minScore    = tmpMinScore;
+        maxScore    = tmpMaxScore;
+        count       = std::move(tmpCount);
+    }
+}
+
 void DrawableDistanceHotMap::save(std::ostream& stream) const
 {
     stream << minScore << " " << maxScore << "\n" << count.size();

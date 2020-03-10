@@ -57,7 +57,11 @@ bool ValkyrieWalkerApp::parseCommandLine()
         walkerFileName = cmdFileName;
         std::ifstream   walkerFile(cmdFileName);
 
-        walkers.emplace_back(walkerFile);
+        walkerFile  >> distanceGraph
+                    >> speciesGraph
+                    >> distanceHotMap;
+        walkers.clear();
+        walkers.insert(std::istream_iterator<Walker>{walkerFile}, std::istream_iterator{});
     }
     return true;
 }
