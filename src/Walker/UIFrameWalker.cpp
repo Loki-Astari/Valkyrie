@@ -138,7 +138,7 @@ void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
     std::default_random_engine&     generator   = ThorsUtil::Random::getRandomGenerator();
     std::uniform_real_distribution  random;
 
-    wxProgressDialog* dialog = new wxProgressDialog(wxT("Running 1K"), wxT("Progress: "), 100, this, wxPD_APP_MODAL);
+    wxProgressDialog dialog(wxT("Running 1K"), wxT("Progress: "), 100, this, wxPD_APP_MODAL);
 
     for(int loop = 0; loop < 100; ++loop)
     {
@@ -184,9 +184,8 @@ void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
 
         // ------
 
-        dialog->Update(loop);
+        dialog.Update(loop);
 
         // ------
     }
-    dialog->Destroy();
 }
