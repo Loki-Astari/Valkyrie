@@ -73,3 +73,13 @@ void DrawableDistanceHotMap::tick(bool update)
         panelDistanceMap->Refresh();
     }
 }
+
+void DrawableDistanceHotMap::save(std::ostream& stream) const
+{
+    stream << minScore << " " << maxScore << "\n" << count.size();
+    for (auto const& val: count)
+    {
+        stream << " " << val;
+    }
+    stream << "\n";
+}

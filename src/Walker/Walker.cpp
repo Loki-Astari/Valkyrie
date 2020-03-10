@@ -108,7 +108,7 @@ void Muscle::mutateContractLen()
     std::uniform_real_distribution<float>   lenDist(0.1, 1.0);
 
     float tmpContractLen      = lenDist(generator);
-    float tmpExtendedLen      = extendedLen; 
+    float tmpExtendedLen      = extendedLen;
     std::tie(contractLen, extendedLen) = std::minmax(tmpContractLen, tmpExtendedLen);
 }
 

@@ -79,3 +79,18 @@ void DrawableSpeciesGraph::tick(bool update)
         panelSpeciesGraph->Refresh();
     }
 }
+
+void DrawableSpeciesGraph::save(std::ostream& stream) const
+{
+    stream << count << " " << speciesCount.size() << "\n";
+    for (auto const& spec: speciesCount)
+    {
+        stream << spec.first << " " << spec.second.size();
+        for (auto const& val: spec.second)
+        {
+            stream << " " << val;
+        }
+        stream << "\n";
+    }
+
+}

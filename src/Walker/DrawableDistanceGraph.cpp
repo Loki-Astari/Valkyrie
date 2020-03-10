@@ -98,3 +98,17 @@ void DrawableDistanceGraph::tick(bool update)
         panelDistanceGraph->Refresh();
     }
 }
+
+void DrawableDistanceGraph::save(std::ostream& stream) const
+{
+    stream << minValue << " " << maxValue << " " << count << " " << distance.size() << "\n";
+    for (auto const& row: distance)
+    {
+        stream << row.size();
+        for (auto const& val: row)
+        {
+            stream << " " << val;
+        }
+        stream << "\n";
+    }
+}

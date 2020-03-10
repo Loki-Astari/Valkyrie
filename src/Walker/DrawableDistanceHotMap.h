@@ -25,6 +25,13 @@ class DrawableDistanceHotMap: public ThorsAnvil::ThorsUI::Drawable
         virtual wxSize  getSize()       const override;
 
         void tick(bool update = true);
+        void save(std::ostream& stream) const;
+
+        friend std::ostream& operator<<(std::ostream& stream, DrawableDistanceHotMap const& data)
+        {
+            data.save(stream);
+            return stream;
+        }
 };
 
 

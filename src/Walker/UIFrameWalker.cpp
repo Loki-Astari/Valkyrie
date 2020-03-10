@@ -91,6 +91,9 @@ void FrameWalker::onQuit(wxCommandEvent& /*event*/)
 void FrameWalker::onSave(wxCommandEvent& /*event*/)
 {
     std::ofstream   save("save.walker");
+    save    << distanceGraph    << "\n"
+            << speciesGraph     << "\n"
+            << distanceHotMap   << "\n";
     for (auto const& walker: walkers)
     {
         save << walker;
@@ -140,7 +143,7 @@ void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
 
     wxProgressDialog dialog(wxT("Running 1K"), wxT("Progress: "), 100, this, wxPD_APP_MODAL);
 
-    for(int loop = 0; loop < 100; ++loop)
+    for (int loop = 0; loop < 100; ++loop)
     {
         for (auto& walker: walkers)
         {
