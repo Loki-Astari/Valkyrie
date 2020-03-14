@@ -1,5 +1,6 @@
 #include "UIPanelWalkerCrowd.h"
-#include "ThorsUI/UIPanelDrawable.h"
+#include "ThorsUI/UIPanelDrawableClickAction.h"
+#include "ThorsUI/UIPanelAnimateableRunner.h"
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
@@ -16,7 +17,12 @@ PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walker
     for (auto& walker: walkers)
     {
         buttons.emplace_back(*this, walker, 1.0 / 20);
-        wxPanel* walkerPanel = new ThorsUI::PanelDrawable(this, buttons.back());
+        wxPanel* walkerPanel = new ThorsUI::PanelDrawableClickAction(this, buttons.back(),[parent = this, &walker](ThorsUI::PanelDrawableClickAction&){
+            std::cout << "Got here\n";
+            wxFrame* frame = new wxFrame(parent, wxID_ANY , wxT("Runner"));
+            new ThorsUI::PanelAnimateableRunner(frame, walker, 40);
+            frame->Show();
+        });
         walkerSizer->Add(walkerPanel, 1, 0, 0, nullptr);
     }
     SetSizerAndFit(walkerSizer);
