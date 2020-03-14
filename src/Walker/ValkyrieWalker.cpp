@@ -5,6 +5,7 @@
 #include "ThorsUtil/Random.h"
 #include <wx/filename.h>
 #include <fstream>
+#include <iterator>
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
@@ -61,7 +62,7 @@ bool ValkyrieWalkerApp::parseCommandLine()
                     >> speciesGraph
                     >> distanceHotMap;
         walkers.clear();
-        walkers.insert(std::istream_iterator<Walker>{walkerFile}, std::istream_iterator{});
+        walkers.insert(std::end(walkers), std::istream_iterator<Walker>{walkerFile}, std::istream_iterator<Walker>{});
     }
     return true;
 }
@@ -76,7 +77,7 @@ bool ValkyrieWalkerApp::OnInit()
         return false;
     }
 
-    while (walkers.size() < 100)
+    while (walkers.size() < 1000)
     {
         walkers.emplace_back();
     }

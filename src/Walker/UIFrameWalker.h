@@ -44,6 +44,8 @@ class FrameWalker: public wxFrame
         void onRun1K(wxCommandEvent& event);
 
         DECLARE_EVENT_TABLE()
+
+        void save();
 };
 
     }

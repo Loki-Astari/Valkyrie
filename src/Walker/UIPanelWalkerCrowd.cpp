@@ -12,7 +12,7 @@ PanelWalkerCrowd::PanelWalkerCrowd(wxWindow* parent, std::vector<Walker>& walker
 {
     buttons.reserve(walkers.size());
 
-    wxSizer* walkerSizer = new wxGridSizer(20, 5, 5);
+    wxSizer* walkerSizer = new wxGridSizer(40, 5, 5);
 
     for (auto& walker: walkers)
     {

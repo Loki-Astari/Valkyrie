@@ -88,7 +88,7 @@ void FrameWalker::onQuit(wxCommandEvent& /*event*/)
     Close();
 }
 
-void FrameWalker::onSave(wxCommandEvent& /*event*/)
+void FrameWalker::save()
 {
     std::ofstream   save("save.walker");
     save    << distanceGraph    << "\n"
@@ -98,6 +98,11 @@ void FrameWalker::onSave(wxCommandEvent& /*event*/)
     {
         save << walker;
     }
+}
+
+void FrameWalker::onSave(wxCommandEvent& /*event*/)
+{
+    save();
 }
 
 void FrameWalker::onRun1(wxCommandEvent& /*event*/)
@@ -143,7 +148,7 @@ void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
 
     wxProgressDialog dialog(wxT("Running 1K"), wxT("Progress: "), 100, this, wxPD_APP_MODAL);
 
-    for (int loop = 0; loop < 100; ++loop)
+    for (int loop = 0; loop < 10000; ++loop)
     {
         for (auto& walker: walkers)
         {
@@ -190,5 +195,9 @@ void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
         dialog.Update(loop);
 
         // ------
+        if (loop / 1000 == 0)
+        {
+            save();
+        }
     }
 }
