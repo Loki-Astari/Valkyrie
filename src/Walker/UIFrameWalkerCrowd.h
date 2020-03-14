@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_VALKYRIE_WALKER_FRAME_WALKER_H
-#define THORSANVIL_VALKYRIE_WALKER_FRAME_WALKER_H
+#ifndef THORSANVIL_VALKYRIE_WALKER_FRAME_WALKER_CROWD_H
+#define THORSANVIL_VALKYRIE_WALKER_FRAME_WALKER_CROWD_H
 
 #include "ValkyrieWalkerConfig.h"
 #include "UIPanelWalkerCrowd.h"
@@ -15,7 +15,7 @@ class Walker;
 class DrawableDistanceGraph;
 class DrawableSpeciesGraph;
 class DrawableDistanceHotMap;
-class FrameWalker: public wxFrame
+class FrameWalkerCrowd: public wxFrame
 {
     static constexpr int BUTTON_SAVE_ID       = wxID_HIGHEST + 1;
     static constexpr int BUTTON_RUN1_ID       = wxID_HIGHEST + 2;
@@ -31,7 +31,7 @@ class FrameWalker: public wxFrame
     PanelWalkerCrowd*           panelWalker;
 
     public:
-        FrameWalker(std::vector<Walker>& walkers, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap);
+        FrameWalkerCrowd(std::vector<Walker>& walkers, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap);
 
     private:
         void onQuit(wxCommandEvent& /*event*/)              {Close();}

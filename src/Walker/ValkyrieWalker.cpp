@@ -1,5 +1,5 @@
 #include "ValkyrieWalker.h"
-#include "UIFrameWalker.h"
+#include "UIFrameWalkerCrowd.h"
 #include "UIFrameGraph.h"
 #include "Walker.h"
 #include "ThorsUtil/Random.h"
@@ -85,8 +85,8 @@ bool ValkyrieWalkerApp::OnInit()
     distanceGraph.tick();
     speciesGraph.tick();
 
-    FrameWalker*    walkerFrame = new FrameWalker(walkers, distanceGraph, speciesGraph, distanceHotMap);
-    FrameGraph*     graphFrame  = new FrameGraph(walkerFrame, distanceGraph, speciesGraph, distanceHotMap);
+    FrameWalkerCrowd*   walkerFrame = new FrameWalkerCrowd(walkers, distanceGraph, speciesGraph, distanceHotMap);
+    FrameGraph*         graphFrame  = new FrameGraph(walkerFrame, distanceGraph, speciesGraph, distanceHotMap);
 
     walkerFrame->Show(true);
     graphFrame->Show(true);

@@ -1,4 +1,4 @@
-#include "UIFrameWalker.h"
+#include "UIFrameWalkerCrowd.h"
 #include "UIFrameGraph.h"
 #include "Walker.h"
 #include "DrawableDistanceGraph.h"
@@ -9,18 +9,18 @@
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
-BEGIN_EVENT_TABLE(FrameWalker, wxFrame)
-    EVT_MENU(wxID_ABOUT,        FrameWalker::onAbout)
-    EVT_MENU(wxID_EXIT,         FrameWalker::onQuit)
-    EVT_BUTTON(BUTTON_SAVE_ID,  FrameWalker::onSave)
-    EVT_BUTTON(BUTTON_RUN1_ID,  FrameWalker::onRun1)
-    EVT_BUTTON(BUTTON_SORT_ID,  FrameWalker::onSort)
-    EVT_BUTTON(BUTTON_UPDATE_ID,FrameWalker::onUpdate)
-    EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalker::onEvolve)
-    EVT_BUTTON(BUTTON_RUN1K_ID, FrameWalker::onRun1K)
+BEGIN_EVENT_TABLE(FrameWalkerCrowd, wxFrame)
+    EVT_MENU(wxID_ABOUT,        FrameWalkerCrowd::onAbout)
+    EVT_MENU(wxID_EXIT,         FrameWalkerCrowd::onQuit)
+    EVT_BUTTON(BUTTON_SAVE_ID,  FrameWalkerCrowd::onSave)
+    EVT_BUTTON(BUTTON_RUN1_ID,  FrameWalkerCrowd::onRun1)
+    EVT_BUTTON(BUTTON_SORT_ID,  FrameWalkerCrowd::onSort)
+    EVT_BUTTON(BUTTON_UPDATE_ID,FrameWalkerCrowd::onUpdate)
+    EVT_BUTTON(BUTTON_EVOLVE_ID,FrameWalkerCrowd::onEvolve)
+    EVT_BUTTON(BUTTON_RUN1K_ID, FrameWalkerCrowd::onRun1K)
 END_EVENT_TABLE()
 
-FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap)
+FrameWalkerCrowd::FrameWalkerCrowd(std::vector<Walker>& walk, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap)
     : wxFrame(nullptr, wxID_ANY , wxT("Valkyrie"))
     , walkers(walk)
     , distanceGraph(distanceGraph)
@@ -76,14 +76,14 @@ FrameWalker::FrameWalker(std::vector<Walker>& walk, DrawableDistanceGraph& dista
 }
 
 
-void FrameWalker::onAbout(wxCommandEvent& /*event*/)
+void FrameWalkerCrowd::onAbout(wxCommandEvent& /*event*/)
 {
     wxString        msg;
     msg.Printf(wxT("Hello and Welcome to %s"), wxVERSION_STRING);
     wxMessageBox(msg, wxT("About Minimal"), wxOK | wxICON_INFORMATION, this);
 }
 
-void FrameWalker::onRun1(wxCommandEvent& /*event*/)
+void FrameWalkerCrowd::onRun1(wxCommandEvent& /*event*/)
 {
     int count = walkers.size();
     int div   = count / 100;
@@ -102,7 +102,7 @@ void FrameWalker::onRun1(wxCommandEvent& /*event*/)
     }
 }
 
-void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
+void FrameWalkerCrowd::onRun1K(wxCommandEvent& /*event*/)
 {
     std::default_random_engine&     generator   = ThorsUtil::Random::getRandomGenerator();
     std::uniform_real_distribution  random;
@@ -163,7 +163,7 @@ void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
     }
 }
 
-void FrameWalker::save()
+void FrameWalkerCrowd::save()
 {
     std::ofstream   save("save.walker");
     save    << distanceGraph    << "\n"
@@ -175,7 +175,7 @@ void FrameWalker::save()
     }
 }
 
-void FrameWalker::update()
+void FrameWalkerCrowd::update()
 {
     distanceGraph.tick();
     speciesGraph.tick();
