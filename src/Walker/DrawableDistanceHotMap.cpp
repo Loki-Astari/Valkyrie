@@ -31,11 +31,6 @@ void DrawableDistanceHotMap::draw(wxDC& dc) const
     }
 }
 
-wxSize DrawableDistanceHotMap::getSize() const
-{
-    return wxSize(400, 400);
-}
-
 extern wxPanel* panelDistanceMap;
 
 void DrawableDistanceHotMap::tick(bool update)

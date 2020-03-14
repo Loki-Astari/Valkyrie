@@ -1,5 +1,4 @@
 #include "UIPanelWalkerCrowd.h"
-#include "Walker.h"
 #include "ThorsUI/UIPanelDrawable.h"
 
 using namespace ThorsAnvil::ValkyrieWalker;
@@ -168,31 +167,6 @@ PanelWalkerCrowd::WalkerButton::WalkerButton(PanelWalkerCrowd& parent, Walker& w
     , flashBackgroundTime(0)
     , flashBackgroundBrush(*wxWHITE_BRUSH)
 {}
-
-void PanelWalkerCrowd::WalkerButton::kill()
-{
-    walker.kill();
-}
-
-bool PanelWalkerCrowd::WalkerButton::wasKilled() const
-{
-    return walker.wasKilled();
-}
-
-void PanelWalkerCrowd::WalkerButton::mutate()
-{
-    walker.mutate();
-}
-
-void PanelWalkerCrowd::WalkerButton::spawn(WalkerButton const& parent)
-{
-    walker.spawn(parent.walker);
-}
-
-void PanelWalkerCrowd::WalkerButton::refresh()
-{
-    parent.Refresh();
-}
 
 void PanelWalkerCrowd::WalkerButton::draw(wxDC& dc) const
 {

@@ -59,11 +59,6 @@ void DrawableDistanceGraph::draw(wxDC& dc) const
     }
 }
 
-wxSize DrawableDistanceGraph::getSize() const
-{
-    return wxSize(400, 400);
-}
-
 extern wxPanel* panelDistanceGraph;
 
 void DrawableDistanceGraph::tick(bool update)

@@ -23,7 +23,7 @@ class DrawableDistanceGraph: public ThorsAnvil::ThorsUI::Drawable
         DrawableDistanceGraph(std::vector<Walker> const& walkers);
 
         virtual void    draw(wxDC& dc)  const override;
-        virtual wxSize  getSize()       const override;
+        virtual wxSize  getSize()       const override  {return wxSize(400, 400);}
 
         void tick(bool update = true);
         void load(std::istream& stream);

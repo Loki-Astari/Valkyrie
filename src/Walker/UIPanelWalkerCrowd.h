@@ -1,6 +1,7 @@
 #ifndef THORSANVIL_VALKYRIE_WALKER_UI_PANEL_WALKER_CROWD_H
 #define THORSANVIL_VALKYRIE_WALKER_UI_PANEL_WALKER_CROWD_H
 
+#include "Walker.h"
 #include "ThorsUI/Animateable.h"
 #include "ThorsUI/UIPanelAnimateableRunner.h"
 #include "ThorsUI/UIPanelSpriteRunner.h"
@@ -29,12 +30,12 @@ class PanelWalkerCrowd: public ThorsAnvil::ThorsUI::PanelSpriteRunner
             virtual void    draw(wxDC& dc)  const override;
             virtual wxSize  getSize()       const override;
 
-            void kill();
-            bool wasKilled() const;
-            void mutate();
-            void spawn(WalkerButton const& parent);
+            void kill()                                 {walker.kill();}
+            bool wasKilled() const                      {return walker.wasKilled();}
+            void mutate()                               {walker.mutate();}
+            void spawn(WalkerButton const& parent)      {walker.spawn(parent.walker);}
 
-            void refresh();
+            void refresh()                              {parent.Refresh();}
             void flashBorder(int time, wxPen const& pen);
             void flashBackground(int time, wxBrush const& brush);
     };

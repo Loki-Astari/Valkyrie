@@ -7,20 +7,6 @@
 
 using namespace ThorsAnvil::ValkyrieWalker;
 
-Clock::Clock()
-    : time(0)
-{}
-
-int Clock::tick()
-{
-    return ++time;
-}
-
-void Clock::reset()
-{
-    time = 0;
-}
-
 Node::Node()
 {
     std::default_random_engine&             generator   = ThorsUtil::Random::getRandomGenerator();
@@ -39,40 +25,24 @@ void Node::mutateMass()
     mass        = massDist(generator);
 }
 
-Pos const& Node::getPos() const
-{
-    return position;
-}
-
-int Node::getMass() const
-{
-    return mass;
-}
-
 void Node::updatePos(Force const& force)
 {
     position.first  += std::trunc(force.first);
     position.second += std::trunc(force.second);
 }
 
-void Node::setPos(Pos const& p)
-{
-    position = p;
-}
-
-void Node::reset()
-{
-    position = startState;
-}
-
 void Node::load(std::istream& stream)
 {
-    stream >> startState.first >> startState.second >> mass;
+    stream  >> startState.first
+            >> startState.second
+            >> mass;
 }
 
 void Node::save(std::ostream& stream) const
 {
-    stream << startState.first << " " << startState.second << " " << mass << " ";
+    stream  << startState.first  << " "
+            << startState.second << " "
+            << mass              << " ";
 }
 
 Muscle::Muscle()
@@ -144,30 +114,24 @@ void Muscle::tick(int tick)
     }
 }
 
-void Muscle::reset()
-{
-    currentSize = startState;
-    currentTick = 0;
-}
-
-float Muscle::getLen() const
-{
-    return currentSize;
-}
-
 void Muscle::load(std::istream& stream)
 {
-    stream >> startState >> extendedLen >> contractLen >> strength >> extendedTime >> contractTime;
+    stream  >> startState
+            >> extendedLen
+            >> contractLen
+            >> strength
+            >> extendedTime
+            >> contractTime;
 }
 
 void Muscle::save(std::ostream& stream) const
 {
-    stream << startState << " " << extendedLen << " " << contractLen << " " << strength << " " << extendedTime << " " << contractTime << " ";
-}
-
-Walker::Walker(std::istream& stream)
-{
-    stream >> (*this);
+    stream  << startState   << " "
+            << extendedLen  << " "
+            << contractLen  << " "
+            << strength     << " "
+            << extendedTime << " "
+            << contractTime << " ";
 }
 
 Walker::Walker()
@@ -412,11 +376,6 @@ void Walker::kill()
     // Add one node so it will be drawn but can't move
     nodes.emplace_back();
     normalize();
-}
-
-bool Walker::wasKilled() const
-{
-    return nodes.size() < 2 || muscles.size() < 1;
 }
 
 void Walker::removeMuscle(int muscleId)
@@ -765,21 +724,6 @@ void Walker::drawAnimation(wxDC& dc, int /*step*/) const
     }
     dc.SetBrush(*wxRED_BRUSH);
     dc.DrawCircle(toScreen(calculateCenterOfGravity()), 30);
-}
-
-void Walker::animationStepDo(wxDC& /*dc*/, int /*step*/)
-{
-    tick();
-}
-
-int Walker::animationMaxStep() const
-{
-    return 100;
-}
-
-wxSize Walker::getSize() const
-{
-    return {1000, 1000};
 }
 
 namespace ThorsAnvil::ValkyrieWalker

@@ -83,16 +83,6 @@ void FrameWalker::onAbout(wxCommandEvent& /*event*/)
     wxMessageBox(msg, wxT("About Minimal"), wxOK | wxICON_INFORMATION, this);
 }
 
-void FrameWalker::onQuit(wxCommandEvent& /*event*/)
-{
-    Close();
-}
-
-void FrameWalker::onSave(wxCommandEvent& /*event*/)
-{
-    save();
-}
-
 void FrameWalker::onRun1(wxCommandEvent& /*event*/)
 {
     int count = walkers.size();
@@ -110,21 +100,6 @@ void FrameWalker::onRun1(wxCommandEvent& /*event*/)
         }
         ++count;
     }
-}
-
-void FrameWalker::onSort(wxCommandEvent& /*event*/)
-{
-    sort();
-}
-
-void FrameWalker::onEvolve(wxCommandEvent& /*event*/)
-{
-    evolve();
-}
-
-void FrameWalker::onUpdate(wxCommandEvent& /*event*/)
-{
-    update();
 }
 
 void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
@@ -198,16 +173,6 @@ void FrameWalker::save()
     {
         save << walker;
     }
-}
-
-void FrameWalker::sort()
-{
-    panelWalker->shuffle();
-}
-
-void FrameWalker::evolve()
-{
-    panelWalker->evolve();
 }
 
 void FrameWalker::update()

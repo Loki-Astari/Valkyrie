@@ -34,20 +34,20 @@ class FrameWalker: public wxFrame
         FrameWalker(std::vector<Walker>& walkers, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap);
 
     private:
-        void onQuit(wxCommandEvent& event);
+        void onQuit(wxCommandEvent& /*event*/)              {Close();}
         void onAbout(wxCommandEvent& event);
-        void onSave(wxCommandEvent& event);
+        void onSave(wxCommandEvent& /*event*/)              {save();}
         void onRun1(wxCommandEvent& event);
-        void onSort(wxCommandEvent& event);
-        void onUpdate(wxCommandEvent& event);
-        void onEvolve(wxCommandEvent& event);
         void onRun1K(wxCommandEvent& event);
+        void onSort(wxCommandEvent& /*event*/)              {sort();}
+        void onUpdate(wxCommandEvent& /*event*/)            {update();}
+        void onEvolve(wxCommandEvent& /*event*/)            {evolve();}
 
         DECLARE_EVENT_TABLE()
 
         void save();
-        void sort();
-        void evolve();
+        void sort()                                         {panelWalker->shuffle();}
+        void evolve()                                       {panelWalker->evolve();}
         void update();
 };
 

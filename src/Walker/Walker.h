@@ -21,9 +21,9 @@ class Clock
 {
     int time;
     public:
-        Clock();
-        int tick();
-        void reset();
+        Clock()         : time(0)   {}
+        int tick()                  {return ++time;}
+        void reset()                {time = 0;}
 };
 
 class Node
@@ -36,12 +36,12 @@ class Node
 
         void mutateMass();
 
-        Pos const&  getPos()    const;
-        int         getMass()   const;
+        Pos const&  getPos()    const       {return position;}
+        int         getMass()   const       {return mass;}
         void updatePos(Force const& f);
-        void setPos(Pos const& p);
+        void setPos(Pos const& p)           {position = p;}
 
-        void reset();
+        void reset()                        {position = startState;}
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -71,10 +71,10 @@ class Muscle
         void mutateExtendedTime();
         void mutateContractTime();
 
-        float getLen() const;
+        float getLen() const        {return currentSize;}
         void tick(int tick);
 
-        void reset();
+        void reset()                {currentSize = startState;currentTick = 0;}
 
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
@@ -97,23 +97,22 @@ class Walker: public ThorsUI::Animateable
     int                     currentScore;
     bool                    invalidScore;
     public:
+        Walker(std::istream& stream)        {stream >> (*this);}
         Walker();
-        Walker(std::istream& stream);
+
         void        run();
-        int         score() const {return invalidScore ? 0 : currentScore;}
+        int         score() const       {return invalidScore ? 0 : currentScore;}
         int         tick();
         void        kill();
-        bool        wasKilled() const;
+        bool        wasKilled() const   {return nodes.size() < 2 || muscles.size() < 1;}
         void        mutate();
         void        spawn(Walker const& parent);
         std::string species() const;
 
-        virtual wxSize  getSize()                           const   override;
+        virtual wxSize  getSize()                           const   override    {return {1000, 1000};}
+        virtual void    animationStepDo(wxDC&, int)                 override    {tick();}
+        virtual int     animationMaxStep()                  const   override    {return 100;}
         virtual void    drawAnimation(wxDC& dc, int step)   const   override;
-        // virtual std::unique_ptr<wxDC>   animationDC()               override;
-        // virtual void    animateResetDo(wxDC& dc)                    override;
-        virtual void    animationStepDo(wxDC& dc, int step)         override;
-        virtual int     animationMaxStep()                  const   override;
     private:
         void normalize();
 
