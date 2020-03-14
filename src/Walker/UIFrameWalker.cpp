@@ -88,18 +88,6 @@ void FrameWalker::onQuit(wxCommandEvent& /*event*/)
     Close();
 }
 
-void FrameWalker::save()
-{
-    std::ofstream   save("save.walker");
-    save    << distanceGraph    << "\n"
-            << speciesGraph     << "\n"
-            << distanceHotMap   << "\n";
-    for (auto const& walker: walkers)
-    {
-        save << walker;
-    }
-}
-
 void FrameWalker::onSave(wxCommandEvent& /*event*/)
 {
     save();
@@ -126,19 +114,17 @@ void FrameWalker::onRun1(wxCommandEvent& /*event*/)
 
 void FrameWalker::onSort(wxCommandEvent& /*event*/)
 {
-    panelWalker->shuffle();
+    sort();
 }
 
 void FrameWalker::onEvolve(wxCommandEvent& /*event*/)
 {
-    panelWalker->evolve();
+    evolve();
 }
 
 void FrameWalker::onUpdate(wxCommandEvent& /*event*/)
 {
-    distanceGraph.tick();
-    speciesGraph.tick();
-    distanceHotMap.tick();
+    update();
 }
 
 void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
@@ -200,4 +186,33 @@ void FrameWalker::onRun1K(wxCommandEvent& /*event*/)
             save();
         }
     }
+}
+
+void FrameWalker::save()
+{
+    std::ofstream   save("save.walker");
+    save    << distanceGraph    << "\n"
+            << speciesGraph     << "\n"
+            << distanceHotMap   << "\n";
+    for (auto const& walker: walkers)
+    {
+        save << walker;
+    }
+}
+
+void FrameWalker::sort()
+{
+    panelWalker->shuffle();
+}
+
+void FrameWalker::evolve()
+{
+    panelWalker->evolve();
+}
+
+void FrameWalker::update()
+{
+    distanceGraph.tick();
+    speciesGraph.tick();
+    distanceHotMap.tick();
 }

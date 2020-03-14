@@ -46,6 +46,9 @@ class FrameWalker: public wxFrame
         DECLARE_EVENT_TABLE()
 
         void save();
+        void sort();
+        void evolve();
+        void update();
 };
 
     }
