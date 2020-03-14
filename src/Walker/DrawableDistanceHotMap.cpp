@@ -31,8 +31,6 @@ void DrawableDistanceHotMap::draw(wxDC& dc) const
     }
 }
 
-extern wxPanel* panelDistanceMap;
-
 void DrawableDistanceHotMap::tick(bool update)
 {
     int     maxBucketCount  = 75;
@@ -63,9 +61,9 @@ void DrawableDistanceHotMap::tick(bool update)
         ++count[bucketIndex];
     }
 
-    if (panelDistanceMap && update)
+    if (update)
     {
-        panelDistanceMap->Refresh();
+        refresh();
     }
 }
 

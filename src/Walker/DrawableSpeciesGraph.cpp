@@ -51,8 +51,6 @@ wxSize DrawableSpeciesGraph::getSize() const
     return wxSize(400, 400);
 }
 
-extern wxPanel* panelSpeciesGraph;
-
 void DrawableSpeciesGraph::tick(bool update)
 {
     ++count;
@@ -74,9 +72,10 @@ void DrawableSpeciesGraph::tick(bool update)
             ++(find->second.back());
         }
     }
-    if (panelSpeciesGraph && update)
+
+    if (update)
     {
-        panelSpeciesGraph->Refresh();
+        refresh();
     }
 }
 

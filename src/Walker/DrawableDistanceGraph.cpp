@@ -59,8 +59,6 @@ void DrawableDistanceGraph::draw(wxDC& dc) const
     }
 }
 
-extern wxPanel* panelDistanceGraph;
-
 void DrawableDistanceGraph::tick(bool update)
 {
     distance[0].emplace_back(walkers[0].score());
@@ -88,9 +86,9 @@ void DrawableDistanceGraph::tick(bool update)
     minValue = std::min(minValue, distance[19].back());
 
     ++count;
-    if (panelDistanceGraph && update)
+    if (update)
     {
-        panelDistanceGraph->Refresh();
+        refresh();
     }
 }
 
