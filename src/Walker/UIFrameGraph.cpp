@@ -14,8 +14,8 @@ wxPanel* panelDistanceGraph = nullptr;
 wxPanel* panelSpeciesGraph  = nullptr;
 wxPanel* panelDistanceMap   = nullptr;
 
-FrameGraph::FrameGraph(DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap)
-    : wxFrame(nullptr, wxID_ANY , wxT("Valkyrie Graph"))
+FrameGraph::FrameGraph(wxWindow* parent, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap)
+    : wxFrame(parent, wxID_ANY , wxT("Valkyrie Graph"))
 {
     panelDistanceGraph = new ThorsUI::PanelDrawable(this, distanceGraph);
     panelSpeciesGraph  = new ThorsUI::PanelDrawable(this, speciesGraph);

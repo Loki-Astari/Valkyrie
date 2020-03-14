@@ -85,8 +85,8 @@ bool ValkyrieWalkerApp::OnInit()
     distanceGraph.tick();
     speciesGraph.tick();
 
-    FrameGraph*     graphFrame  = new FrameGraph(distanceGraph, speciesGraph, distanceHotMap);
     FrameWalker*    walkerFrame = new FrameWalker(walkers, distanceGraph, speciesGraph, distanceHotMap);
+    FrameGraph*     graphFrame  = new FrameGraph(walkerFrame, distanceGraph, speciesGraph, distanceHotMap);
 
     walkerFrame->Show(true);
     graphFrame->Show(true);

@@ -16,7 +16,7 @@ class DrawableDistanceHotMap;
 class FrameGraph: public wxFrame
 {
     public:
-        FrameGraph(DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap);
+        FrameGraph(wxWindow* parent, DrawableDistanceGraph& distanceGraph, DrawableSpeciesGraph& speciesGraph, DrawableDistanceHotMap& distanceHotMap);
 
     private:
 
