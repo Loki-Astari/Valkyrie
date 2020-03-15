@@ -16,6 +16,10 @@ class ValkyrieRunnerApp: public wxApp
 #pragma vera-pushoff
         virtual bool OnInit() override;
 #pragma vera-pop
+    private:
+        wxFrame*        frameButton;
+        wxFrame*        frameGraph;
+        wxFrame*        frameWalkerFarm;
 };
 
     }
