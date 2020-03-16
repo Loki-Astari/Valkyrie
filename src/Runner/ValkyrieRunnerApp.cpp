@@ -1,4 +1,5 @@
 #include "ValkyrieRunnerApp.h"
+#include "PanelButtonBuilder.h"
 #include "ThorsUI/UIFrameSimple.h"
 
 using namespace ThorsAnvil::ValkyrieRunner;
@@ -18,17 +19,22 @@ class Tmp: public ThorsAnvil::ThorsUI::Drawable
         }
         virtual wxSize  getSize()       const override
         {
-            return wxSize(500, 500);
+            return wxSize(100, 100);
         }
 };
 
-Tmp     tmp;
+Tmp                 tmp;
+PanelButtonBuilder  buttonBuilder;
 
 bool ValkyrieRunnerApp::OnInit()
 {
-    frameButton     = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Button"),        wxPoint{100, 100}, tmp);
-    frameGraph      = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Graph"),         wxPoint{100, 600}, tmp);
-    frameWalkerFarm = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Walker Farm"),   wxPoint{600, 100}, tmp);
+    frameButton         = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Button"),    wxPoint{100, 100}, buttonBuilder);
+    wxSize  sizeButton  = frameButton->GetSize();
+
+    frameGraph          = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Graph"),     wxPoint{100, 100 + sizeButton.y}, tmp);
+    wxSize  sizeGraph   = frameGraph->GetSize();
+
+    frameWalkerFarm     = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Walker Farm"),   wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
 
     frameButton->Show();
     frameGraph->Show();
