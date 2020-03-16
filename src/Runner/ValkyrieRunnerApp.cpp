@@ -4,6 +4,17 @@
 
 using namespace ThorsAnvil::ValkyrieRunner;
 
+BEGIN_EVENT_TABLE(ValkyrieRunnerApp, wxApp)
+    EVT_MENU(wxID_ABOUT,            ValkyrieRunnerApp::onAbout)
+    EVT_MENU(wxID_EXIT,             ValkyrieRunnerApp::onQuit)
+    EVT_BUTTON(BUTTON_SAVE_ID,      ValkyrieRunnerApp::onSave)
+    EVT_BUTTON(BUTTON_RUN1_ID,      ValkyrieRunnerApp::onRun1)
+    EVT_BUTTON(BUTTON_SORT_ID,      ValkyrieRunnerApp::onSort)
+    EVT_BUTTON(BUTTON_UPDATE_ID,    ValkyrieRunnerApp::onUpdate)
+    EVT_BUTTON(BUTTON_EVOLVE_ID,    ValkyrieRunnerApp::onEvolve)
+    EVT_BUTTON(BUTTON_RUN1K_ID,     ValkyrieRunnerApp::onRun1K)
+END_EVENT_TABLE()
+
 ValkyrieRunnerApp::ValkyrieRunnerApp()
     : frameButton(nullptr)
     , frameGraph(nullptr)
