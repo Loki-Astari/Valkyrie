@@ -47,6 +47,20 @@ bool UIValkyrieRunnerApp::OnInit()
 
     frameWalkerFarm     = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Walker Farm"),   wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
 
+    wxMenu* fileMenu = new wxMenu;
+    fileMenu->Append(wxID_EXIT,         wxT("E&xit\tAlt-X"),  wxT("Quit Valkyrie Runner"));
+
+    wxMenu* helpMenu = new wxMenu;
+    helpMenu->Append(wxID_ABOUT, wxT("&About...\tF1"), wxT("Show about dialog"));
+
+    wxMenuBar* menuBar = new wxMenuBar{};
+    menuBar->Append(fileMenu, wxT("&File"));
+    menuBar->Append(helpMenu, wxT("&Help"));
+
+    frameButton->SetMenuBar(menuBar);
+    frameButton->CreateStatusBar(2);
+    frameButton->SetStatusText(wxT("Welcome to Valkyrie"));
+
     frameButton->Show();
     frameGraph->Show();
     frameWalkerFarm->Show();
