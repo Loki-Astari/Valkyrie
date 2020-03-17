@@ -40,7 +40,8 @@ bool UIAppValkyrieRunner::OnInit()
     wxSize  sizeButton      = frameButton->GetSize();
 
     wxFrame*    frameGraph  = make_FrameSimpleHorz(nullptr, wxID_ANY, wxT("Runner Graph"), wxPoint{100, 100 + sizeButton.y},
-                                                   distanceGraph, speciesGraph, distanceHotMap);
+                                                   lineGraph);
+                                                   //distanceGraph, speciesGraph, distanceHotMap);
     frameGraph->Show();
     wxSize      sizeGraph   = frameGraph->GetSize();
 
