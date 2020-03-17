@@ -14,6 +14,9 @@ BEGIN_EVENT_TABLE(UIAppValkyrieRunner, wxApp)
 END_EVENT_TABLE()
 
 UIAppValkyrieRunner::UIAppValkyrieRunner()
+    : distanceGraph(runners)
+    , distanceHotMap(runners)
+    , speciesGraph(runners)
 {}
 
 bool UIAppValkyrieRunner::OnInit()
@@ -28,7 +31,7 @@ bool UIAppValkyrieRunner::OnInit()
     menuBar->Append(fileMenu, wxT("&File"));
     menuBar->Append(helpMenu, wxT("&Help"));
 
-    wxFrame*    frameButton = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Button"),    wxPoint{100, 100}, buttonBuilder);
+    wxFrame*    frameButton = make_FrameSimpleHorz(nullptr, wxID_ANY, wxT("Runner Button"), wxPoint{100, 100}, buttonBuilder);
     frameButton->SetMenuBar(menuBar);
     frameButton->CreateStatusBar(1);
     frameButton->SetStatusText(wxT("Welcome to Valkyrie"));
@@ -36,11 +39,12 @@ bool UIAppValkyrieRunner::OnInit()
     frameButton->Show();
     wxSize  sizeButton      = frameButton->GetSize();
 
-    wxFrame*    frameGraph  = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Graph"),     wxPoint{100, 100 + sizeButton.y}, tmp);
+    wxFrame*    frameGraph  = make_FrameSimpleHorz(nullptr, wxID_ANY, wxT("Runner Graph"), wxPoint{100, 100 + sizeButton.y},
+                                                   distanceGraph, speciesGraph, distanceHotMap);
     frameGraph->Show();
     wxSize      sizeGraph   = frameGraph->GetSize();
 
-    wxFrame*    frameWalker = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Walker Farm"),   wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
+    wxFrame*    frameWalker = make_FrameSimpleHorz(nullptr, wxID_ANY, wxT("Runner Walker Farm"), wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
     frameWalker->Show();
 
     return true;

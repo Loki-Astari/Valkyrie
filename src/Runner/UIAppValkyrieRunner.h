@@ -2,10 +2,15 @@
 #define THORSANVIL_VALKYRIE_RUNNER_UI_APP_VALKYRIE_RUNNER_H
 
 #include "ValkyrieRunnerConfig.h"
+#include "Runner.h"
 #include "UIPanelButtonBuilder.h"
+#include "UIDrawableDistanceGraph.h"
+#include "UIDrawableDistanceHotMap.h"
+#include "UIDrawableSpeciesGraph.h"
 #include "ThorsUI/UIFrameSimple.h"
 #include <wx/app.h>
 #include <iostream>
+#include <vector>
 
 namespace ThorsAnvil
 {
@@ -42,8 +47,12 @@ class UIAppValkyrieRunner: public wxApp
 
 
     private:
-        Tmp                     tmp;
-        UIPanelButtonBuilder    buttonBuilder;
+        Tmp                         tmp;
+        std::vector<Runner>         runners;
+        UIPanelButtonBuilder        buttonBuilder;
+        UIDrawableDistanceGraph     distanceGraph;
+        UIDrawableDistanceHotMap    distanceHotMap;
+        UIDrawableSpeciesGraph      speciesGraph;
 
 
         DECLARE_EVENT_TABLE()
