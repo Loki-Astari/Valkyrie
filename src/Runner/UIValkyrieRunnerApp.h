@@ -10,10 +10,10 @@ namespace ThorsAnvil
     namespace ValkyrieRunner
     {
 
-class ValkyrieRunnerApp: public wxApp
+class UIValkyrieRunnerApp: public wxApp
 {
     public:
-        ValkyrieRunnerApp();
+        UIValkyrieRunnerApp();
 #pragma vera-pushoff
         virtual bool OnInit() override;
 #pragma vera-pop

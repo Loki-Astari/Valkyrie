@@ -1,5 +1,5 @@
 #include "ValkyrieRunner.h"
 
-DECLARE_APP(ThorsAnvil::ValkyrieRunner::ValkyrieRunnerApp)
+DECLARE_APP(ThorsAnvil::ValkyrieRunner::UIValkyrieRunnerApp)
 
-IMPLEMENT_APP(ThorsAnvil::ValkyrieRunner::ValkyrieRunnerApp)
+IMPLEMENT_APP(ThorsAnvil::ValkyrieRunner::UIValkyrieRunnerApp)

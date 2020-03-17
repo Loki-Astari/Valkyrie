@@ -9,7 +9,7 @@ namespace ThorsAnvil
     namespace ValkyrieRunner
     {
 
-class PanelButtonBuilder: public ThorsUI::SimplePanelBuilder
+class UIPanelButtonBuilder: public ThorsUI::SimplePanelBuilder
 {
     public:
         virtual void addItems(wxWindow* panel, wxSizer* sizer) const override;
