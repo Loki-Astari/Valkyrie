@@ -1,21 +1,21 @@
-#include "UIValkyrieRunnerApp.h"
+#include "UIAppValkyrieRunner.h"
 #include "UIPanelButtonBuilder.h"
 #include "ThorsUI/UIFrameSimple.h"
 
 using namespace ThorsAnvil::ValkyrieRunner;
 
-BEGIN_EVENT_TABLE(UIValkyrieRunnerApp, wxApp)
-    EVT_MENU(wxID_ABOUT,            UIValkyrieRunnerApp::onAbout)
-    EVT_MENU(wxID_EXIT,             UIValkyrieRunnerApp::onQuit)
-    EVT_BUTTON(BUTTON_SAVE_ID,      UIValkyrieRunnerApp::onSave)
-    EVT_BUTTON(BUTTON_RUN1_ID,      UIValkyrieRunnerApp::onRun1)
-    EVT_BUTTON(BUTTON_SORT_ID,      UIValkyrieRunnerApp::onSort)
-    EVT_BUTTON(BUTTON_UPDATE_ID,    UIValkyrieRunnerApp::onUpdate)
-    EVT_BUTTON(BUTTON_EVOLVE_ID,    UIValkyrieRunnerApp::onEvolve)
-    EVT_BUTTON(BUTTON_RUN1K_ID,     UIValkyrieRunnerApp::onRun1K)
+BEGIN_EVENT_TABLE(UIAppValkyrieRunner, wxApp)
+    EVT_MENU(wxID_ABOUT,            UIAppValkyrieRunner::onAbout)
+    EVT_MENU(wxID_EXIT,             UIAppValkyrieRunner::onQuit)
+    EVT_BUTTON(BUTTON_SAVE_ID,      UIAppValkyrieRunner::onSave)
+    EVT_BUTTON(BUTTON_RUN1_ID,      UIAppValkyrieRunner::onRun1)
+    EVT_BUTTON(BUTTON_SORT_ID,      UIAppValkyrieRunner::onSort)
+    EVT_BUTTON(BUTTON_UPDATE_ID,    UIAppValkyrieRunner::onUpdate)
+    EVT_BUTTON(BUTTON_EVOLVE_ID,    UIAppValkyrieRunner::onEvolve)
+    EVT_BUTTON(BUTTON_RUN1K_ID,     UIAppValkyrieRunner::onRun1K)
 END_EVENT_TABLE()
 
-UIValkyrieRunnerApp::UIValkyrieRunnerApp()
+UIAppValkyrieRunner::UIAppValkyrieRunner()
     : frameButton(nullptr)
     , frameGraph(nullptr)
     , frameWalkerFarm(nullptr)
@@ -37,7 +37,7 @@ class Tmp: public ThorsAnvil::ThorsUI::Drawable
 Tmp                 tmp;
 UIPanelButtonBuilder  buttonBuilder;
 
-bool UIValkyrieRunnerApp::OnInit()
+bool UIAppValkyrieRunner::OnInit()
 {
     frameButton         = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Button"),    wxPoint{100, 100}, buttonBuilder);
     wxSize  sizeButton  = frameButton->GetSize();
