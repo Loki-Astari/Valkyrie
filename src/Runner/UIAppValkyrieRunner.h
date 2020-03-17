@@ -2,6 +2,8 @@
 #define THORSANVIL_VALKYRIE_VALKYRIE_RUNNER_APP_H
 
 #include "ValkyrieRunnerConfig.h"
+#include "UIPanelButtonBuilder.h"
+#include "ThorsUI/UIFrameSimple.h"
 #include <wx/app.h>
 #include <iostream>
 
@@ -12,6 +14,18 @@ namespace ThorsAnvil
 
 class UIAppValkyrieRunner: public wxApp
 {
+    class Tmp: public ThorsAnvil::ThorsUI::Drawable
+    {
+        public:
+            virtual void    draw(wxDC& /*dc*/)  const override
+            {
+            }
+            virtual wxSize  getSize()       const override
+            {
+                return wxSize(100, 100);
+            }
+    };
+
     public:
         UIAppValkyrieRunner();
 #pragma vera-pushoff
@@ -28,9 +42,9 @@ class UIAppValkyrieRunner: public wxApp
 
 
     private:
-        wxFrame*        frameButton;
-        wxFrame*        frameGraph;
-        wxFrame*        frameWalkerFarm;
+        Tmp                     tmp;
+        UIPanelButtonBuilder    buttonBuilder;
+
 
         DECLARE_EVENT_TABLE()
 

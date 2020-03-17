@@ -1,6 +1,4 @@
 #include "UIAppValkyrieRunner.h"
-#include "UIPanelButtonBuilder.h"
-#include "ThorsUI/UIFrameSimple.h"
 
 using namespace ThorsAnvil::ValkyrieRunner;
 
@@ -16,53 +14,34 @@ BEGIN_EVENT_TABLE(UIAppValkyrieRunner, wxApp)
 END_EVENT_TABLE()
 
 UIAppValkyrieRunner::UIAppValkyrieRunner()
-    : frameButton(nullptr)
-    , frameGraph(nullptr)
-    , frameWalkerFarm(nullptr)
-{
-}
-
-class Tmp: public ThorsAnvil::ThorsUI::Drawable
-{
-    public:
-        virtual void    draw(wxDC& /*dc*/)  const override
-        {
-        }
-        virtual wxSize  getSize()       const override
-        {
-            return wxSize(100, 100);
-        }
-};
-
-Tmp                 tmp;
-UIPanelButtonBuilder  buttonBuilder;
+{}
 
 bool UIAppValkyrieRunner::OnInit()
 {
-    frameButton         = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Button"),    wxPoint{100, 100}, buttonBuilder);
-    wxSize  sizeButton  = frameButton->GetSize();
-
-    frameGraph          = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Graph"),     wxPoint{100, 100 + sizeButton.y}, tmp);
-    wxSize  sizeGraph   = frameGraph->GetSize();
-
-    frameWalkerFarm     = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Walker Farm"),   wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
-
-    wxMenu* fileMenu = new wxMenu;
+    wxMenu* fileMenu        = new wxMenu;
     fileMenu->Append(wxID_EXIT,         wxT("E&xit\tAlt-X"),  wxT("Quit Valkyrie Runner"));
 
-    wxMenu* helpMenu = new wxMenu;
+    wxMenu* helpMenu        = new wxMenu;
     helpMenu->Append(wxID_ABOUT, wxT("&About...\tF1"), wxT("Show about dialog"));
 
-    wxMenuBar* menuBar = new wxMenuBar{};
+    wxMenuBar* menuBar      = new wxMenuBar{};
     menuBar->Append(fileMenu, wxT("&File"));
     menuBar->Append(helpMenu, wxT("&Help"));
 
+    wxFrame*    frameButton = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Button"),    wxPoint{100, 100}, buttonBuilder);
     frameButton->SetMenuBar(menuBar);
-    frameButton->CreateStatusBar(2);
+    frameButton->CreateStatusBar(1);
     frameButton->SetStatusText(wxT("Welcome to Valkyrie"));
-
+    frameButton->Fit();
     frameButton->Show();
+    wxSize  sizeButton      = frameButton->GetSize();
+
+    wxFrame*    frameGraph  = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Graph"),     wxPoint{100, 100 + sizeButton.y}, tmp);
     frameGraph->Show();
-    frameWalkerFarm->Show();
+    wxSize      sizeGraph   = frameGraph->GetSize();
+
+    wxFrame*    frameWalker = make_FrameSimpleHorz(nullptr, wxID_ANY , wxT("Runner Walker Farm"),   wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
+    frameWalker->Show();
+
     return true;
 }
