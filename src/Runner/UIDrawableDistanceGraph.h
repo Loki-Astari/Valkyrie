@@ -12,8 +12,12 @@ namespace ThorsAnvil
 class Runner;
 class UIDrawableDistanceGraph: public ThorsAnvil::ThorsUI::Drawable
 {
+    static constexpr int    majorSize = 6;
+    static constexpr int    minorSize = 10;
+
     std::vector<Runner> const&      runners;
-    std::vector<std::vector<int>>   distance;
+    std::vector<std::vector<int>>   distanceMajor;
+    std::vector<std::vector<int>>   distanceMinor;
     int                             minValue;
     int                             maxValue;
     int                             count;
@@ -25,7 +29,7 @@ class UIDrawableDistanceGraph: public ThorsAnvil::ThorsUI::Drawable
         virtual void    draw(wxDC& dc)  const override;
         virtual wxSize  getSize()       const override  {return wxSize(400, 400);}
 
-        void tick(bool update = true);
+        void tick();
         void load(std::istream& stream);
         void save(std::ostream& stream) const;
 

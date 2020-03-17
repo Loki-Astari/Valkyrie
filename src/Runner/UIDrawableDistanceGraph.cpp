@@ -6,7 +6,8 @@ using namespace ThorsAnvil::ValkyrieRunner;
 
 UIDrawableDistanceGraph::UIDrawableDistanceGraph(std::vector<Runner> const& runners)
     : runners(runners)
-    , distance(20)
+    , distanceMajor(majorSize)
+    , distanceMinor(minorSize)
     , minValue(0)
     , maxValue(0)
     , count(0)
@@ -38,79 +39,103 @@ void UIDrawableDistanceGraph::draw(wxDC& dc) const
     if (count > 1)
     {
         dc.SetPen(*wxLIGHT_GREY_PEN);
-        std::set<std::size_t>    smallSet{0, 7, 9, 11, 13, 19};
-
-        for (std::size_t lineId = 0; lineId < distance.size(); ++lineId)
+        for (auto line: distanceMajor)
         {
-            if (drawSmall && smallSet.find(lineId) == smallSet.end())
-            {
-                continue;
-            }
-            std::vector<wxPoint>    points(count);
+            std::vector<wxPoint>    points;
+            points.reserve(count);
 
-            for (std::size_t loop = 0; loop < distance[lineId].size(); ++loop)
+            for (auto point: line)
             {
-                points[loop]    = wxPoint{static_cast<int>(centX + distXRel * loop), static_cast<int>(centY - distYRel * distance[lineId][loop])};
+                points.emplace_back(wxPoint{static_cast<int>(centX + distXRel * points.size()), static_cast<int>(centY - distYRel * point)});
             }
             dc.DrawLines(count, points.data());
         }
     }
 }
 
-void UIDrawableDistanceGraph::tick(bool update)
+void UIDrawableDistanceGraph::tick()
 {
-    distance[0].emplace_back(runners[0].score());
-    distance[1].emplace_back(runners[1].score());
-    distance[2].emplace_back(runners[2].score());
-    distance[3].emplace_back(runners[3].score());
-    distance[4].emplace_back(runners[4].score());
-    distance[5].emplace_back(runners[5].score());
-    distance[6].emplace_back(runners[10].score());
-    distance[7].emplace_back(runners[20].score());
-    distance[8].emplace_back(runners[30].score());
-    distance[9].emplace_back(runners[40].score());
-    distance[10].emplace_back(runners[50].score());
-    distance[11].emplace_back(runners[60].score());
-    distance[12].emplace_back(runners[70].score());
-    distance[13].emplace_back(runners[80].score());
-    distance[14].emplace_back(runners[90].score());
-    distance[15].emplace_back(runners[95].score());
-    distance[16].emplace_back(runners[96].score());
-    distance[17].emplace_back(runners[97].score());
-    distance[18].emplace_back(runners[98].score());
-    distance[19].emplace_back(runners[99].score());
+    int oneP        = runners.size() / 100;
+    int runners100  = 0;
+    int runners80   = oneP * (100 - 80);
+    int runners60   = oneP * (100 - 60);
+    int runners40   = oneP * (100 - 40);
+    int runners20   = oneP * (100 - 20);
+    int runners00   = runners.size() - 1;
 
-    maxValue = std::max(maxValue, distance[0].back());
-    minValue = std::min(minValue, distance[19].back());
+    distanceMajor[0].emplace_back(runners[runners100].score());
+    distanceMajor[1].emplace_back(runners[runners80].score());
+    distanceMajor[2].emplace_back(runners[runners60].score());
+    distanceMajor[3].emplace_back(runners[runners40].score());
+    distanceMajor[4].emplace_back(runners[runners20].score());
+    distanceMajor[5].emplace_back(runners[runners00].score());
+
+
+    int runners98   = oneP * (100 - 98);
+    int runners96   = oneP * (100 - 96);
+    int runners94   = oneP * (100 - 94);
+    int runners92   = oneP * (100 - 92);
+    int runners90   = oneP * (100 - 90);
+    int runners10   = oneP * (100 - 10);
+    int runners08   = oneP * (100 - 8);
+    int runners06   = oneP * (100 - 6);
+    int runners04   = oneP * (100 - 4);
+    int runners02   = oneP * (100 - 2);
+    distanceMinor[0].emplace_back(runners[runners98].score());
+    distanceMinor[1].emplace_back(runners[runners96].score());
+    distanceMinor[2].emplace_back(runners[runners94].score());
+    distanceMinor[3].emplace_back(runners[runners92].score());
+    distanceMinor[4].emplace_back(runners[runners90].score());
+    distanceMinor[5].emplace_back(runners[runners10].score());
+    distanceMinor[6].emplace_back(runners[runners08].score());
+    distanceMinor[7].emplace_back(runners[runners06].score());
+    distanceMinor[8].emplace_back(runners[runners04].score());
+    distanceMinor[9].emplace_back(runners[runners02].score());
+
+    maxValue = std::max(maxValue, distanceMajor.front().back());
+    minValue = std::min(minValue, distanceMajor.back().back());
 
     ++count;
-    if (update)
-    {
-        refresh();
-    }
+    refresh();
 }
 
 void UIDrawableDistanceGraph::load(std::istream& stream)
 {
-    std::vector<std::vector<int>>   tmpDistance;
+    std::vector<std::vector<int>>   tmpDistanceMajor;
+    std::vector<std::vector<int>>   tmpDistanceMinor;
     int                             tmpMinValue;
     int                             tmpMaxValue;
     int                             tmpCount;
-    int                             sizeCount;
-    if (stream >> tmpMinValue >> tmpMaxValue >> tmpCount >> sizeCount)
+    if (stream >> tmpMinValue >> tmpMaxValue >> tmpCount)
     {
-        for (int loop = 0; loop < sizeCount; ++loop)
+        for (int loop = 0; loop < majorSize; ++loop)
         {
             int  count;
             if (stream >> count)
             {
-                tmpDistance.emplace_back();
+                tmpDistanceMajor.emplace_back();
                 for (int index = 0; index < count; ++index)
                 {
                     int val;
                     if (stream >> val)
                     {
-                        tmpDistance.back().emplace_back(val);
+                        tmpDistanceMajor.back().emplace_back(val);
+                    }
+                }
+            }
+        }
+        for (int loop = 0; loop < minorSize; ++loop)
+        {
+            int  count;
+            if (stream >> count)
+            {
+                tmpDistanceMinor.emplace_back();
+                for (int index = 0; index < count; ++index)
+                {
+                    int val;
+                    if (stream >> val)
+                    {
+                        tmpDistanceMinor.back().emplace_back(val);
                     }
                 }
             }
@@ -118,18 +143,28 @@ void UIDrawableDistanceGraph::load(std::istream& stream)
     }
     if (stream)
     {
-        distance    = std::move(tmpDistance);
-        minValue    = tmpMinValue;
-        maxValue    = tmpMaxValue;
-        count       = tmpCount;
-        drawSmall   = true;
+        distanceMajor   = std::move(tmpDistanceMajor);
+        distanceMinor   = std::move(tmpDistanceMinor);
+        minValue        = tmpMinValue;
+        maxValue        = tmpMaxValue;
+        count           = tmpCount;
+        drawSmall       = true;
     }
 }
 
 void UIDrawableDistanceGraph::save(std::ostream& stream) const
 {
-    stream << minValue << " " << maxValue << " " << count << " " << distance.size() << "\n";
-    for (auto const& row: distance)
+    stream << minValue << " " << maxValue << " " << count << " " << "\n";
+    for (auto const& row: distanceMajor)
+    {
+        stream << row.size();
+        for (auto const& val: row)
+        {
+            stream << " " << val;
+        }
+        stream << "\n";
+    }
+    for (auto const& row: distanceMinor)
     {
         stream << row.size();
         for (auto const& val: row)
