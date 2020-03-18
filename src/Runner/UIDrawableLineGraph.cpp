@@ -16,44 +16,66 @@ UIDrawableLineGraph::UIDrawableLineGraph()
 
 void UIDrawableLineGraph::draw(wxDC& dc) const
 {
-    drawLegend(dc);
+    wxCoord     maxNameWidth  = 0;
+    wxCoord     maxNameHeight = 0;
+    std::tie(maxNameWidth, maxNameHeight) = calcLegendStats(dc);
+
+    drawLegend(dc, maxNameWidth, maxNameHeight);
 }
 
-void UIDrawableLineGraph::drawLegend(wxDC& dc) const
+std::pair<wxCoord, wxCoord> UIDrawableLineGraph::calcLegendStats(wxDC& dc) const
 {
     wxCoord     maxNameWidth  = 0;
     wxCoord     maxNameHeight = 0;
-    wxCoord     width;
-    wxCoord     height;
+
     for (auto const& line: lines)
     {
+        wxCoord     width;
+        wxCoord     height;
         dc.GetTextExtent(line.first, &width, &height);
         maxNameWidth    = std::max(maxNameWidth, width);
         maxNameHeight   = std::max(maxNameHeight,height);
     }
 
+    return std::make_pair(maxNameWidth, maxNameHeight);
+}
+
+void UIDrawableLineGraph::drawLegend(wxDC& dc, wxCoord maxNameWidth, wxCoord maxNameHeight) const
+{
+    // Work out how we are going to draw the legend.
     wxSize  size = getSize();
     int     pointsPerLegend     = maxNameWidth + lineLen;
-    int     legendsPerRow       = size.x / pointsPerLegend;
+    int     legendsPerRow       = (size.x - gap) / pointsPerLegend;
     int     noLines             = lines.size();
     int     rowsNeeded          = noLines / legendsPerRow;
     int     maxLegendsPerRow    = noLines < legendsPerRow ? noLines : legendsPerRow;
     rowsNeeded += ((noLines % legendsPerRow) == 0 ? 0 : 1);
 
+    // Set up the position we will write text
     int y    = size.y - rowsNeeded * (maxNameHeight + gap);
     int x    = gap;
-    int item = 0;
+
     dc.DrawRectangle(wxPoint{gap/2, y - gap/2}, wxSize{pointsPerLegend * maxLegendsPerRow + gap, rowsNeeded * maxNameHeight + gap});
+
+    // Get a copy of the pen and set global parameters for drawing lines
+    wxPen pen = dc.GetPen();
+    pen.SetWidth(2);
+
+    int item = 0;
     for (auto const& line: lines)
     {
-        dc.DrawText(line.first, wxPoint{x, y});
-        wxPen pen = dc.GetPen();
+        // Set the colour we will use for the line
         pen.SetColour(line.second.lineColor);
-        pen.SetWidth(2);
         dc.SetPen(pen);
+
+        // Draw the name of the row and piece of line in the correct colour
+        dc.DrawText(line.first, wxPoint{x, y});
         dc.DrawLine(wxPoint{x + maxNameWidth + 5, y + maxNameHeight/2}, wxPoint{x + maxNameWidth + 25, y + maxNameHeight/2});
-        x += pointsPerLegend;
+
+        // Update the drawing position
+        // At the end of a row we move down and reset the x position.
         ++item;
+        x += pointsPerLegend;
         if (item == legendsPerRow)
         {
             x = gap;
