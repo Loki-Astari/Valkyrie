@@ -18,19 +18,21 @@ UIDrawableLineGraph::UIDrawableLineGraph()
     addPoints("Tik Tak Wine",         {0, 10, 20, 30, 40 , 50 , 60, 70, 80, 100});
 }
 
+wxSize UIDrawableLineGraph::getSize() const
+{
+    return wxSize(400, 400);
+}
+
 void UIDrawableLineGraph::draw(wxDC& dc) const
 {
-    wxSize      maxNameSize;
-    wxSize      maxValueSize;
-    std::tie(maxNameSize, maxValueSize) = calcLegendStats(dc);
-
+    Spec    size        = calcLegendStats(dc);
     wxSize  fullSize    = getSize();
-    wxSize  graphSize   = drawLegend(dc, fullSize, maxNameSize);
-    Area    graphArea   = drawAxis(dc, graphSize, maxValueSize);
+    wxSize  graphSize   = drawLegend(dc, fullSize, size.first);
+    Area    graphArea   = drawAxis(dc, graphSize, size.second);
     drawGraphs(dc, graphArea);
 }
 
-wxSize UIDrawableLineGraph::getSize(wxDC& dc, std::string const& text) const
+wxSize UIDrawableLineGraph::getTextSize(wxDC& dc, std::string const& text) const
 {
     wxCoord     width;
     wxCoord     height;
@@ -39,16 +41,23 @@ wxSize UIDrawableLineGraph::getSize(wxDC& dc, std::string const& text) const
     return wxSize(width, height);
 }
 
+void UIDrawableLineGraph::rightjustifyText(wxDC& dc, std::string const& text, wxPoint const& topLeft, wxSize const& size) const
+{
+    wxSize  textSize;
+    textSize = getTextSize(dc, text.c_str());
+    dc.DrawText(text.c_str(), wxPoint{topLeft.x + size.x - textSize.x, topLeft.y});
+}
+
 UIDrawableLineGraph::Spec UIDrawableLineGraph::calcLegendStats(wxDC& dc) const
 {
-    wxSize      valueSizeMax = getSize(dc, std::to_string(maxPoint));
-    wxSize      valueSizeMin = getSize(dc, std::to_string(minPoint));
+    wxSize      valueSizeMax = getTextSize(dc, std::to_string(maxPoint));
+    wxSize      valueSizeMin = getTextSize(dc, std::to_string(minPoint));
     wxSize      valueSize{std::max(valueSizeMax.x, valueSizeMin.x), std::max(valueSizeMax.y, valueSizeMin.y)};
 
     wxSize      nameSize(0,0);
     for (auto const& line: lines)
     {
-        wxSize size = getSize(dc, line.first);
+        wxSize size = getTextSize(dc, line.first);
         nameSize.x  = std::max(nameSize.x, size.x);
         nameSize.y  = std::max(nameSize.y, size.y);
     }
@@ -89,33 +98,28 @@ void UIDrawableLineGraph::drawGraphs(wxDC& dc, Area const& graphArea) const
 
 UIDrawableLineGraph::Area UIDrawableLineGraph::drawAxis(wxDC& dc, wxSize const& size, wxSize const& maxValueSize) const
 {
-    // Get a copy of the pen and set global parameters for drawing lines
-    wxPen pen = dc.GetPen();
-
     wxPoint graphOffset = {gap + maxValueSize.x, gap};
     wxSize  graphSize   = {size.x - maxValueSize.x - 2*gap, size.y - 2*gap};
     float   yScale      = graphSize.y * 1.0 / (maxPoint - minPoint);
     int     yOffset     = yScale * maxPoint;
 
+    wxPen pen = dc.GetPen();
     pen.SetWidth(2);
     pen.SetColour(wxTransparentColour);
     dc.SetPen(pen);
+
+    // Draw the white background (no border).
     dc.DrawRectangle(graphOffset, graphSize);
 
-    wxSize  textSize;
-
-    textSize = getSize(dc, std::to_string(maxPoint));
-    dc.DrawText(std::to_string(maxPoint).c_str(), wxPoint{maxValueSize.x - textSize.x, 0});
-
-    textSize = getSize(dc, "0");
-    dc.DrawText("0", wxPoint{maxValueSize.x - textSize.x, static_cast<int>(graphOffset.y + yScale * maxPoint - maxValueSize.y/2)});
-
-    textSize = getSize(dc, std::to_string(minPoint));
-    dc.DrawText(std::to_string(minPoint).c_str(), wxPoint{maxValueSize.x - textSize.x, size.y - maxValueSize.y});
+    // Put the bounds of X axis
+    rightjustifyText(dc, std::to_string(maxPoint), wxPoint(0, 0), maxValueSize);
+    rightjustifyText(dc, "0", wxPoint{0, static_cast<int>(graphOffset.y + yScale * maxPoint - maxValueSize.y/2)}, maxValueSize);
+    rightjustifyText(dc, std::to_string(minPoint), wxPoint(0, size.y - maxValueSize.y), maxValueSize);
 
     pen.SetColour(*wxBLACK);
     dc.SetPen(pen);
 
+    // Draw the Black axis
     dc.DrawLine(graphOffset, wxPoint{graphOffset.x, graphOffset.y + graphSize.y});
     dc.DrawLine(wxPoint{graphOffset.x, graphOffset.y + yOffset}, wxPoint{graphOffset.x + graphSize.x, graphOffset.y + yOffset});
 
@@ -166,11 +170,6 @@ wxSize UIDrawableLineGraph::drawLegend(wxDC& dc, wxSize const& size, wxSize cons
         }
     }
     return wxSize(size.x, top - gap/2);
-}
-
-wxSize UIDrawableLineGraph::getSize() const
-{
-    return wxSize(400, 400);
 }
 
 void UIDrawableLineGraph::addPoints(std::string const& name, std::initializer_list<int> const& list)

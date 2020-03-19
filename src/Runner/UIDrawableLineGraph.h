@@ -47,7 +47,9 @@ class UIDrawableLineGraph: public ThorsAnvil::ThorsUI::Drawable
         wxSize  drawLegend(wxDC& dc, wxSize const& size, wxSize const& maxNameSize) const;
         Area    drawAxis(wxDC& dc, wxSize const& size, wxSize const& maxValueSize) const;
         void    drawGraphs(wxDC& dc, Area const& graphArea) const;
-        wxSize  getSize(wxDC& dc, std::string const& text) const;
+
+        void    rightjustifyText(wxDC& dc, std::string const& text, wxPoint const& topLeft, wxSize const& size) const;
+        wxSize  getTextSize(wxDC& dc, std::string const& text) const;
 
         void    addPoints(std::string const& name, std::initializer_list<int> const& list);
         void    addPoint(std::string const& name, int point);
