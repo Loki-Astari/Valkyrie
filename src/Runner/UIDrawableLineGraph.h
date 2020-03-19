@@ -13,7 +13,7 @@ namespace ThorsAnvil
 
 class UIDrawableLineGraph: public ThorsAnvil::ThorsUI::Drawable
 {
-    static constexpr int gap        = 5;
+    static constexpr int gap        = 6;
     static constexpr int lineLen    = 30;
     static const wxColor lineColors[];
 
@@ -31,6 +31,7 @@ class UIDrawableLineGraph: public ThorsAnvil::ThorsUI::Drawable
     int         maxPoint;
     int         minPoint;
     int         nextColour;
+    int         pointCount;
 
     public:
         UIDrawableLineGraph();
@@ -39,10 +40,12 @@ class UIDrawableLineGraph: public ThorsAnvil::ThorsUI::Drawable
         virtual wxSize  getSize()       const override;
 
     private:
-        std::pair<wxCoord, wxCoord> calcLegendStats(wxDC& dc) const;
-        void drawLegend(wxDC& dc, wxCoord maxNameWidth, wxCoord maxNameHeight) const;
-        void addPoints(std::string const& name, std::initializer_list<int> const& list);
-        void addPoint(std::string const& name, int point);
+        std::pair<wxSize, wxSize> calcLegendStats(wxDC& dc) const;
+        int     drawLegend(wxDC& dc, wxSize const& size, wxSize const& maxNameSize) const;
+        void    drawAxis(wxDC& dc, wxSize const& size, wxSize const& maxValueSize) const;
+        void    addPoints(std::string const& name, std::initializer_list<int> const& list);
+        void    addPoint(std::string const& name, int point);
+        wxSize  getSize(wxDC& dc, std::string const& text) const;
 };
 
 
