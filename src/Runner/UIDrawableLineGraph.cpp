@@ -15,7 +15,7 @@ UIDrawableLineGraph::UIDrawableLineGraph()
     addPoints("Bad person",           {0, -2, -8, -8, -2, -6, -22, -34, -34, -40});
     addPoints("A Person interest Now",{-40, 40, -40, 40, -40, 40, -40, 40, -40, 40});
     addPoints("Summer Wine",          {0, 10, 20, 30, 40 , 50 , 60, 70, 80, 90});
-    addPoints("Tik Tak Wine",         {0, 10, 20, 30, 40 , 50 , 60, 70, 80, 90});
+    addPoints("Tik Tak Wine",         {0, 10, 20, 30, 40 , 50 , 60, 70, 80, 100});
 }
 
 void UIDrawableLineGraph::draw(wxDC& dc) const
@@ -24,9 +24,10 @@ void UIDrawableLineGraph::draw(wxDC& dc) const
     wxSize      maxValueSize;
     std::tie(maxNameSize, maxValueSize) = calcLegendStats(dc);
 
-    wxSize  size    = getSize();
-    int     maxY    = drawLegend(dc, size, maxNameSize);
-    drawAxis(dc, {size.x, maxY}, maxValueSize);
+    wxSize  fullSize    = getSize();
+    wxSize  graphSize   = drawLegend(dc, fullSize, maxNameSize);
+    Area    graphArea   = drawAxis(dc, graphSize, maxValueSize);
+    drawGraphs(dc, graphArea);
 }
 
 wxSize UIDrawableLineGraph::getSize(wxDC& dc, std::string const& text) const
@@ -38,7 +39,7 @@ wxSize UIDrawableLineGraph::getSize(wxDC& dc, std::string const& text) const
     return wxSize(width, height);
 }
 
-std::pair<wxSize, wxSize> UIDrawableLineGraph::calcLegendStats(wxDC& dc) const
+UIDrawableLineGraph::Spec UIDrawableLineGraph::calcLegendStats(wxDC& dc) const
 {
     wxSize      valueSizeMax = getSize(dc, std::to_string(maxPoint));
     wxSize      valueSizeMin = getSize(dc, std::to_string(minPoint));
@@ -52,17 +53,47 @@ std::pair<wxSize, wxSize> UIDrawableLineGraph::calcLegendStats(wxDC& dc) const
         nameSize.y  = std::max(nameSize.y, size.y);
     }
 
-    return std::make_pair(nameSize, valueSize);
+    return Spec(nameSize, valueSize);
 }
 
-void UIDrawableLineGraph::drawAxis(wxDC& dc, wxSize const& size, wxSize const& maxValueSize) const
+void UIDrawableLineGraph::drawGraphs(wxDC& dc, Area const& graphArea) const
+{
+    wxPoint const&  graphOffset = graphArea.first;
+    wxSize  const&  graphSize   = graphArea.second;
+    float   const   xScale      = graphSize.x * 1.0 / (pointCount - 1);
+    float   const   yScale      = graphSize.y * 1.0 / (maxPoint - minPoint);
+    int     const   yOffset     = yScale * maxPoint;
+
+    wxPen pen = dc.GetPen();
+
+    for (auto const& line: lines)
+    {
+        LineInfo const& info = line.second;
+
+        // Set the colour we will use for the line
+        pen.SetColour(info.lineColor);
+        dc.SetPen(pen);
+
+        std::vector<wxPoint>    arc;
+        arc.reserve(info.points.size());
+        int xPoint = 0;
+        for (auto const& point: info.points)
+        {
+            arc.emplace_back(xPoint * xScale, -point * yScale);
+            ++xPoint;
+        }
+
+        dc.DrawLines(arc.size(), arc.data(), graphOffset.x, graphOffset.y + yOffset);
+    }
+}
+
+UIDrawableLineGraph::Area UIDrawableLineGraph::drawAxis(wxDC& dc, wxSize const& size, wxSize const& maxValueSize) const
 {
     // Get a copy of the pen and set global parameters for drawing lines
     wxPen pen = dc.GetPen();
 
     wxPoint graphOffset = {gap + maxValueSize.x, gap};
     wxSize  graphSize   = {size.x - maxValueSize.x - 2*gap, size.y - 2*gap};
-    //float   xScale      = graphSize.x * 1.0 / pointCount;
     float   yScale      = graphSize.y * 1.0 / (maxPoint - minPoint);
     int     yOffset     = yScale * maxPoint;
 
@@ -87,9 +118,11 @@ void UIDrawableLineGraph::drawAxis(wxDC& dc, wxSize const& size, wxSize const& m
 
     dc.DrawLine(graphOffset, wxPoint{graphOffset.x, graphOffset.y + graphSize.y});
     dc.DrawLine(wxPoint{graphOffset.x, graphOffset.y + yOffset}, wxPoint{graphOffset.x + graphSize.x, graphOffset.y + yOffset});
+
+    return Area(graphOffset, graphSize);
 }
 
-int UIDrawableLineGraph::drawLegend(wxDC& dc, wxSize const& size, wxSize const& maxNameSize) const
+wxSize UIDrawableLineGraph::drawLegend(wxDC& dc, wxSize const& size, wxSize const& maxNameSize) const
 {
     // Work out how we are going to draw the legend.
     int     pointsPerLegend     = maxNameSize.x + lineLen;
@@ -132,7 +165,7 @@ int UIDrawableLineGraph::drawLegend(wxDC& dc, wxSize const& size, wxSize const& 
             y += maxNameSize.y;
         }
     }
-    return top - gap/2;
+    return wxSize(size.x, top - gap/2);
 }
 
 wxSize UIDrawableLineGraph::getSize() const

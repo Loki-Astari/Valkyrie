@@ -40,12 +40,17 @@ class UIDrawableLineGraph: public ThorsAnvil::ThorsUI::Drawable
         virtual wxSize  getSize()       const override;
 
     private:
-        std::pair<wxSize, wxSize> calcLegendStats(wxDC& dc) const;
-        int     drawLegend(wxDC& dc, wxSize const& size, wxSize const& maxNameSize) const;
-        void    drawAxis(wxDC& dc, wxSize const& size, wxSize const& maxValueSize) const;
+        using Area  = std::pair<wxPoint, wxSize>;
+        using Spec  = std::pair<wxSize, wxSize>;
+
+        Spec    calcLegendStats(wxDC& dc) const;
+        wxSize  drawLegend(wxDC& dc, wxSize const& size, wxSize const& maxNameSize) const;
+        Area    drawAxis(wxDC& dc, wxSize const& size, wxSize const& maxValueSize) const;
+        void    drawGraphs(wxDC& dc, Area const& graphArea) const;
+        wxSize  getSize(wxDC& dc, std::string const& text) const;
+
         void    addPoints(std::string const& name, std::initializer_list<int> const& list);
         void    addPoint(std::string const& name, int point);
-        wxSize  getSize(wxDC& dc, std::string const& text) const;
 };
 
 
