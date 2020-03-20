@@ -7,7 +7,6 @@
 #include "UIDrawableDistanceGraph.h"
 #include "UIDrawableDistanceHotMap.h"
 #include "UIDrawableSpeciesGraph.h"
-#include "UIDrawableLineGraph.h"
 #include "ThorsUI/UIFrameSimple.h"
 #include <wx/app.h>
 #include <iostream>
@@ -54,7 +53,6 @@ class UIAppValkyrieRunner: public wxApp
         UIDrawableDistanceGraph     distanceGraph;
         UIDrawableDistanceHotMap    distanceHotMap;
         UIDrawableSpeciesGraph      speciesGraph;
-        UIDrawableLineGraph         lineGraph;
 
 
         DECLARE_EVENT_TABLE()
