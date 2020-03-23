@@ -4,6 +4,7 @@
 #include "ValkyrieRunnerConfig.h"
 #include "Runner.h"
 #include "UIPanelButtonBuilder.h"
+#include "UIPanelRunnerCrowd.h"
 #include "UIDrawableDistanceGraph.h"
 #include "UIDrawableDistanceHotMap.h"
 #include "UIDrawableSpeciesGraph.h"
@@ -19,18 +20,6 @@ namespace ThorsAnvil
 class UIAppValkyrieRunner: public wxApp
 {
     static const wxCmdLineEntryDesc cmdLineDesc[];
-
-    class Tmp: public ThorsAnvil::ThorsUI::Drawable
-    {
-        public:
-            virtual void    draw(wxDC& /*dc*/)  const override
-            {
-            }
-            virtual wxSize  getSize()       const override
-            {
-                return wxSize(100, 100);
-            }
-    };
 
     public:
         UIAppValkyrieRunner();
@@ -48,10 +37,10 @@ class UIAppValkyrieRunner: public wxApp
 
 
     private:
-        Tmp                         tmp;
         int                         runnerCount;
         std::vector<Runner>         runners;
         UIPanelButtonBuilder        buttonBuilder;
+        UIPanelRunnerCrowd          runnerCrowd;
         UIDrawableDistanceGraph     distanceGraph;
         UIDrawableDistanceHotMap    distanceHotMap;
         UIDrawableSpeciesGraph      speciesGraph;

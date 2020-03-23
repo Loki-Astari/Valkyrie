@@ -24,6 +24,7 @@ END_EVENT_TABLE()
 
 UIAppValkyrieRunner::UIAppValkyrieRunner()
     : runnerCount(100)
+    , runnerCrowd(runners)
     , distanceGraph(runners)
     , distanceHotMap(runners)
     , speciesGraph(runners)
@@ -71,7 +72,7 @@ bool UIAppValkyrieRunner::OnInit()
     frameGraph->Show();
     wxSize      sizeGraph   = frameGraph->GetSize();
 
-    wxFrame*    frameWalker = make_FrameSimpleHorz(nullptr, wxID_ANY, wxT("Runner Walker Farm"), wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
+    wxFrame*    frameWalker = make_FrameSimpleHorz(nullptr, wxID_ANY, wxT("Runner Walker Farm"), wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, runnerCrowd);
     frameWalker->Show();
 
     return true;
