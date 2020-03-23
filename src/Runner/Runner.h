@@ -2,7 +2,8 @@
 #define THORSANVIL_VALKYRIE_RUNNER_RUNNER_H
 
 #include "ThorsUI/Drawable.h"
-#include <vector>
+#include <random>
+#include <string>
 
 namespace ThorsAnvil
 {
@@ -12,6 +13,8 @@ namespace ThorsAnvil
 class Runner
 {
     public:
+        Runner(std::default_random_engine&) {}
+
         int         score()     const {return 0;}
         std::string species()   const {return "";}
 };

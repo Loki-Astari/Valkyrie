@@ -3,6 +3,7 @@
 
 #include "ThorsUI/UIDrawableLineGraph.h"
 #include <vector>
+#include <iostream>
 
 namespace ThorsAnvil
 {

@@ -3,6 +3,7 @@
 
 #include "ThorsUI/Drawable.h"
 #include <vector>
+#include <iostream>
 
 namespace ThorsAnvil
 {

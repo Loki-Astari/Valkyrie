@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <iostream>
 
 namespace ThorsAnvil
 {

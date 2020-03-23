@@ -1,6 +1,15 @@
 #include "UIAppValkyrieRunner.h"
+#include "ThorsUtil/Random.h"
 
 using namespace ThorsAnvil::ValkyrieRunner;
+
+const wxCmdLineEntryDesc UIAppValkyrieRunner::cmdLineDesc[] =
+{
+     { wxCMD_LINE_SWITCH, "h", "help",      "displays help on the command line parameters", wxCMD_LINE_VAL_NONE,    wxCMD_LINE_OPTION_HELP },
+     { wxCMD_LINE_OPTION, "r", "seed",      "Random Seed",                                  wxCMD_LINE_VAL_NUMBER,  wxCMD_LINE_PARAM_OPTIONAL},
+     { wxCMD_LINE_OPTION, "c", "count",     "Count of runners generated",                   wxCMD_LINE_VAL_NUMBER,  wxCMD_LINE_PARAM_OPTIONAL},
+     { wxCMD_LINE_NONE, 0, 0, 0, wxCMD_LINE_VAL_NONE, 0 }
+};
 
 BEGIN_EVENT_TABLE(UIAppValkyrieRunner, wxApp)
     EVT_MENU(wxID_ABOUT,            UIAppValkyrieRunner::onAbout)
@@ -14,13 +23,30 @@ BEGIN_EVENT_TABLE(UIAppValkyrieRunner, wxApp)
 END_EVENT_TABLE()
 
 UIAppValkyrieRunner::UIAppValkyrieRunner()
-    : distanceGraph(runners)
+    : runnerCount(100)
+    , distanceGraph(runners)
     , distanceHotMap(runners)
     , speciesGraph(runners)
 {}
 
 bool UIAppValkyrieRunner::OnInit()
 {
+    std::cout.sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    if (!parseCommandLine())
+    {
+        return false;
+    }
+
+    std::default_random_engine& randomGenerator = ThorsUtil::Random::getRandomGenerator();
+
+    runners.reserve(runnerCount);
+    for (int loop = 0; loop < runnerCount; ++loop)
+    {
+        runners.emplace_back(randomGenerator);
+    }
+
     wxMenu* fileMenu        = new wxMenu;
     fileMenu->Append(wxID_EXIT,         wxT("E&xit\tAlt-X"),  wxT("Quit Valkyrie Runner"));
 
@@ -47,6 +73,33 @@ bool UIAppValkyrieRunner::OnInit()
 
     wxFrame*    frameWalker = make_FrameSimpleHorz(nullptr, wxID_ANY, wxT("Runner Walker Farm"), wxPoint{100, 100 + sizeGraph.y + sizeButton.y}, tmp);
     frameWalker->Show();
+
+    return true;
+}
+
+bool UIAppValkyrieRunner::parseCommandLine()
+{
+    wxCmdLineParser     commandLineParser(cmdLineDesc, argc, argv);
+
+    int res = commandLineParser.Parse(false);
+    if (res == -1 || res > 0 || commandLineParser.Found(wxT("h")))
+    {
+        commandLineParser.Usage();
+        return false;
+    }
+
+    long seed;
+    if (commandLineParser.Found(wxT("r"), &seed))
+    {
+        // Set seed for random number generator.
+        ThorsUtil::Random::defaltGeneratorSeedSet(seed);
+    }
+
+    long count;
+    if (commandLineParser.Found(wxT("c"), &count))
+    {
+        runnerCount = count;
+    }
 
     return true;
 }

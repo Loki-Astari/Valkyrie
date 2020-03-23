@@ -7,10 +7,9 @@
 #include "UIDrawableDistanceGraph.h"
 #include "UIDrawableDistanceHotMap.h"
 #include "UIDrawableSpeciesGraph.h"
-#include "ThorsUI/UIFrameSimple.h"
 #include <wx/app.h>
+#include <wx/cmdline.h>
 #include <iostream>
-#include <vector>
 
 namespace ThorsAnvil
 {
@@ -19,6 +18,8 @@ namespace ThorsAnvil
 
 class UIAppValkyrieRunner: public wxApp
 {
+    static const wxCmdLineEntryDesc cmdLineDesc[];
+
     class Tmp: public ThorsAnvil::ThorsUI::Drawable
     {
         public:
@@ -48,12 +49,14 @@ class UIAppValkyrieRunner: public wxApp
 
     private:
         Tmp                         tmp;
+        int                         runnerCount;
         std::vector<Runner>         runners;
         UIPanelButtonBuilder        buttonBuilder;
         UIDrawableDistanceGraph     distanceGraph;
         UIDrawableDistanceHotMap    distanceHotMap;
         UIDrawableSpeciesGraph      speciesGraph;
 
+        bool parseCommandLine();
 
         DECLARE_EVENT_TABLE()
 
